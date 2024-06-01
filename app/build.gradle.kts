@@ -53,12 +53,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.circleimageview)
+    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
-    implementation (libs.androidx.recyclerview)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.logging.interceptor)
 }
