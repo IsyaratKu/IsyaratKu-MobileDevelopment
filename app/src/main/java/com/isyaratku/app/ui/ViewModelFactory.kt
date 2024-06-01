@@ -7,9 +7,6 @@ import com.isyaratku.app.data.UserRepository
 import com.isyaratku.app.di.Injection
 import com.isyaratku.app.ui.account.login.LoginViewModel
 import com.isyaratku.app.ui.main.MainViewModel
-import com.isyaratku.app.ui.main.dashboard.DashboardViewModel
-import com.isyaratku.app.ui.main.home.HomeViewModel
-import com.isyaratku.app.ui.main.notifications.NotificationsViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
 
