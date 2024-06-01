@@ -18,12 +18,12 @@
         android:gravity="center"
         android:text="welcome to Isyaratku"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/ivProfile"
         tools:alpha="100" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_marginEnd="16dp"
         android:alpha="100"
         android:gravity="center"
-        android:text="deskripsi"
+        android:text="Learn Sign Language Now"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:padding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTextView">
@@ -127,31 +128,64 @@
         android:layout_marginBottom="16dp"
         android:alpha="100"
         android:text="login"
-        app:layout_constraintBottom_toTopOf="@+id/tvRegister"
+        app:layout_constraintBottom_toTopOf="@+id/linearRegister"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:alpha="100" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="32dp"
-        android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvRegister"
+
+        <RelativeLayout
+            android:id="@+id/ivProfile"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivHuman"
+                android:layout_width="match_parent"
+                android:layout_height="360dp"
+                android:src="@drawable/loginimage"
+                android:scaleType="centerCrop"
+                 />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="160dp"  android:layout_alignParentBottom="true"
+                android:background="@drawable/bottom_gradient_white" />
+
+        </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/linearRegister"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
-        android:text="Don't have any account ?"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="64dp"
+        >
+
+        <TextView
+            android:id="@+id/tvRegisterDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have any account ?  "
+            />
+
+        <TextView
+            android:id="@+id/tvRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:textColor="@color/hyperlinkblue"
+            />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,12 +42,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        viewModel.getSession().observe(this) { user ->
-            if (!user.isLogin) {
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                finish()
-            }
-        }
 
     }
 }

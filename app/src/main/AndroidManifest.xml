@@ -13,22 +13,28 @@
         android:theme="@style/Theme.Isyaratku"
         tools:targetApi="31">
         <activity
-            android:name=".ui.account.register.RegisterActivity"
-            android:exported="false"
-            android:theme="@style/Theme.NoAction"/>
-        <activity
-            android:name=".ui.account.login.LoginActivity"
-            android:exported="false"
-            android:theme="@style/Theme.NoAction"/>
-        <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.splashscreen.SplashActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:theme="@style/Theme.Isyaratku">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".ui.account.register.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NoAction" />
+        <activity
+            android:name=".ui.account.login.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.NoAction" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="false">
         </activity>
     </application>
 
