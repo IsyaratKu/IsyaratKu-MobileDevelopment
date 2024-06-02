@@ -1,28 +1,35 @@
 package com.isyaratku.app.ui.splashscreen
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.isyaratku.app.R
+import com.isyaratku.app.databinding.ActivitySplashBinding
 import com.isyaratku.app.ui.ViewModelFactory
 import com.isyaratku.app.ui.account.login.LoginActivity
 import com.isyaratku.app.ui.main.MainActivity
-import com.isyaratku.app.ui.main.MainViewModel
+import kotlinx.coroutines.delay
 
 class SplashActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<SplashViewModel> {
         ViewModelFactory.getInstance(this)
     }
+
+    private lateinit var binding : ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.hide()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -30,6 +37,7 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
+        playAnimation()
         checkSession()
 
     }
@@ -48,6 +56,22 @@ class SplashActivity : AppCompatActivity() {
                 },2000)
             }
         }
+    }
+
+    private fun playAnimation() {
+
+        val title = ObjectAnimator.ofFloat(binding.title, View.ALPHA, 1f).setDuration(500)
+        val desc = ObjectAnimator.ofFloat(binding.desc, View.ALPHA, 1f).setDuration(300)
+        val logo = ObjectAnimator.ofFloat(binding.circleImage, View.ALPHA, 1f).setDuration(300)
+
+        val together = AnimatorSet().apply {
+            playTogether(title,desc)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(logo, together)
+            startDelay = 300
+        }.start()
     }
 
 }

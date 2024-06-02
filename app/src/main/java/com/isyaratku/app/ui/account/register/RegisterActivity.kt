@@ -14,7 +14,6 @@ import com.isyaratku.app.ui.account.login.LoginActivity
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var currentImageUri: Uri? = null
 
     private lateinit var binding: ActivityRegisterBinding
 
@@ -48,41 +47,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        binding.apply {
-            tvProfile.setOnClickListener {
-                startGallery()
-            }
-            ivProfile.setOnClickListener {
-                startGallery()
-            }
-        }
-    }
-
-    private fun startGallery() {
-        launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
     }
 
-    private val launcherGallery = registerForActivityResult(
-        ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            currentImageUri = uri
-            showImage()
-            showToast("Photo Picked")
-        } else {
-            Log.d("Photo Picker", "No media selected")
-        }
-    }
-
-    private fun showImage() {
-        currentImageUri?.let {
-            Log.d("Image URI", "showImage: $it")
-            binding.ivProfile.setImageURI(it)
-        }
-    }
-
-    fun showToast(message: String){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
-    }
 }
