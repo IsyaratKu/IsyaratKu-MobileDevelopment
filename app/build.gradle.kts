@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.circleimageview)
 
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
     implementation (libs.androidx.recyclerview)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
