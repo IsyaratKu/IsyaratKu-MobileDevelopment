@@ -2,13 +2,18 @@ package com.isyaratku.app.ui.account.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.textfield.TextInputEditText
 import com.isyaratku.app.R
+import com.isyaratku.app.customview.AccButton
+import com.isyaratku.app.customview.AccEditText
 import com.isyaratku.app.data.pref.UserModel
 import com.isyaratku.app.databinding.ActivityLoginBinding
 import com.isyaratku.app.ui.ViewModelFactory
@@ -22,18 +27,24 @@ class LoginActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityLoginBinding
 
+    private lateinit var accButton: AccButton
+    private lateinit var accPasstext: AccEditText
+    private lateinit var accEmailText: TextInputEditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        // enableEdgeToEdge() // disable dulu, gambar ga mentok atas soalnya
+        enableEdgeToEdge()
         setContentView(binding.root)
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }*/
+        }
 
+        setupView()
         setupAction()
+
 
     }
 
@@ -60,4 +71,53 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun setupView() {
+        accButton = binding.loginButton
+        accPasstext = binding.passwordEditText
+        accEmailText = binding.emailEditText
+
+        setMyButtonEnable()
+
+
+        accPasstext.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                setMyButtonEnable()
+            }
+
+            override fun afterTextChanged(s: Editable) {
+
+            }
+        })
+
+        accEmailText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                setMyButtonEnable()
+            }
+
+            override fun afterTextChanged(s: Editable) {
+            }
+        })
+
+
+    }
+
+    private fun setMyButtonEnable() {
+
+        val password = accPasstext.text
+        val email = accEmailText.text
+
+
+        accButton.isEnabled = password != null && password.toString().isNotEmpty()
+                && email != null && email.toString().isNotEmpty()
+                && password.toString().length >= 8
+
+    }
+
 }

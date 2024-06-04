@@ -32,14 +32,15 @@
         <activity
             android:name=".ui.account.register.RegisterActivity"
             android:exported="false"
-            android:theme="@style/Theme.NoAction" />
+            android:theme="@style/Theme.Isyaratku" />
         <activity
             android:name=".ui.account.login.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.NoAction" />
+            android:theme="@style/Theme.Isyaratku" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false">
+            android:exported="false"
+            android:theme="@style/Theme.Isyaratku">
         </activity>
     </application>
 

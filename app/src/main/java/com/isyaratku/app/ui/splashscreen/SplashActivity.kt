@@ -46,12 +46,15 @@ class SplashActivity : AppCompatActivity() {
 
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
+                val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 Handler().postDelayed({
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    startActivity(intent)
                 },2000)
             } else {
                 Handler().postDelayed({
                     val intent = Intent(this@SplashActivity,MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 },2000)
             }

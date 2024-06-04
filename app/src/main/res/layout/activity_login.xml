@@ -65,6 +65,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:padding="0dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTextView">
@@ -74,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Enter your username"
+            android:hint="Insert your Username"
             android:inputType="textEmailAddress"
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -108,18 +109,17 @@
         app:layout_constraintTop_toBottomOf="@+id/passwordTextView"
         tools:alpha="100">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.isyaratku.app.customview.AccEditText
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="100"
             android:ems="10"
-            android:hint="Enter your password"
             android:inputType="textPassword"
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.isyaratku.app.customview.AccButton
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
