@@ -5,17 +5,16 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home" />
-<!--
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="@string/title_dashboard" />
-    <item
-        android:id="@+id/navigation_camera"
-        android:title="Camera"
-        android:icon="@drawable/baseline_front_hand_24" />
 
-       !-->
+    <item
+        android:id="@+id/fab"
+        android:title=""
+        android:enabled="false"
+        />
 
     <item
         android:id="@+id/navigation_rank"
