@@ -22,7 +22,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="24dp"
-                tools:src="@tools:sample/avatars" />
+                android:src="@drawable/def_profile"/>
 
             <TextView
                 android:id="@+id/tvUsername"
@@ -30,7 +30,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text="username"
+                android:text=""
+                tools:text="username"
                 android:textStyle="bold" />
 
             <TextView
@@ -39,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text="email@email.com" />
+                tools:text="email@email.com"
+                android:text="" />
 
             <TextView
                 android:id="@+id/tvPoint"
@@ -47,14 +49,28 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text="Point : 90000"
+                android:text=""
+                tools:text="Point : 9123"
                 android:textSize="10sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewProfile"
                 android:layout_width="match_parent"
-                android:layout_height="498dp"
+                android:layout_height="565dp"
                 android:padding="16dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressIndicator"
+        android:layout_width="404dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="184dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

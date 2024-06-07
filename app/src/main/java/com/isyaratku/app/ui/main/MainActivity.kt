@@ -5,22 +5,27 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.isyaratku.app.R
 import com.isyaratku.app.databinding.ActivityMainBinding
+import com.isyaratku.app.setting.SettingModelFactory
+import com.isyaratku.app.setting.SettingPreference
+import com.isyaratku.app.setting.SettingViewModel
+import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
+import com.isyaratku.app.ui.account.login.LoginActivity
 import com.isyaratku.app.ui.main.cameraActivity.CameraActivity
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var settingViewModel : SettingViewModel
 
     private var currentImageUri: Uri? = null
 
@@ -62,8 +68,8 @@ class MainActivity : AppCompatActivity() {
         // setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
-
+        getThemeSetting()
+        checkSession()
 
         binding.fabCamera.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, REQUIRED_PERMISSION) !=
@@ -100,6 +106,31 @@ class MainActivity : AppCompatActivity() {
         const val CAMERAX_RESULT = 200
     }
 
+    fun getThemeSetting(){
+        val pref = SettingPreference.getInstance(this.datastore)
+        settingViewModel = ViewModelProvider(this, SettingModelFactory(pref)).get(SettingViewModel::class.java)
+
+        settingViewModel.getThemeSetting().observe(this) { isDarkModeActive ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+    }
+
+    fun checkSession() {
+
+        viewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+
+            }
+        }
+    }
 
 
 }

@@ -7,6 +7,7 @@ import com.isyaratku.app.data.UserRepository
 import com.isyaratku.app.di.Injection
 import com.isyaratku.app.ui.account.login.LoginViewModel
 import com.isyaratku.app.ui.main.MainViewModel
+import com.isyaratku.app.ui.main.profile.ProfileViewModel
 import com.isyaratku.app.ui.splashscreen.SplashViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
@@ -22,6 +23,9 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             }
             modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
                 SplashViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
+                ProfileViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

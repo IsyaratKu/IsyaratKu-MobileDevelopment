@@ -1,20 +1,32 @@
 package com.isyaratku.app.ui.account.register
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.isyaratku.app.R
+import com.isyaratku.app.api.ApiConfig.getApiService
+import com.isyaratku.app.api.ErrorResponse
+import com.isyaratku.app.api.RegisterResponse
 import com.isyaratku.app.customview.AccButton
 import com.isyaratku.app.customview.AccEditText
 import com.isyaratku.app.databinding.ActivityRegisterBinding
 import com.isyaratku.app.ui.account.login.LoginActivity
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -44,18 +56,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.registerButton.setOnClickListener {
-            val email = binding.emailEditText.text.toString()
-
-            AlertDialog.Builder(this).apply {
-                setTitle("Yeah!")
-                setMessage("Akun dengan $email sudah jadi nih. Yuk, login dan belajar coding.")
-                setPositiveButton("Lanjut") { _, _ ->
-                    val intent = Intent(this@RegisterActivity,LoginActivity::class.java)
-                    startActivity(intent)
-                }
-                create()
-                show()
-            }
+            requestRegister()
         }
 
 
@@ -120,6 +121,50 @@ class RegisterActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun requestRegister() {
+        showLoading(true)
+
+        lifecycleScope.launch {
+
+            val email: String = binding.emailEditText.text.toString()
+            val password: String = binding.passwordEditText.text.toString()
+            val username: String = binding.usernameEditText.text.toString()
+            try {
+                val intent = Intent(this@RegisterActivity,LoginActivity::class.java)
+                intent.putExtra("email", email)
+                val jsonString = """
+                        {
+                          "email": "$email",
+                          "password": "$password",
+                          "username" : "$username"
+                        }
+                    """
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+
+                val apiService = getApiService()
+                apiService.register(jsonObject)
+                showToast("User Account Created, Check Email Verification at your email for login")
+                showLoading(false)
+                startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this@RegisterActivity as Activity).toBundle())
+
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                showToast(errorResponse.error.toString())
+                showLoading(false)
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setMyButtonEnable() {

@@ -9,14 +9,19 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.isyaratku.app.R
 import com.isyaratku.app.databinding.ActivitySplashBinding
+import com.isyaratku.app.setting.SettingModelFactory
+import com.isyaratku.app.setting.SettingPreference
+import com.isyaratku.app.setting.SettingViewModel
+import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
 import com.isyaratku.app.ui.account.login.LoginActivity
 import com.isyaratku.app.ui.main.MainActivity
-import kotlinx.coroutines.delay
 
 class SplashActivity : AppCompatActivity() {
 
@@ -25,6 +30,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private lateinit var binding : ActivitySplashBinding
+    private lateinit var settingViewModel : SettingViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -76,5 +82,7 @@ class SplashActivity : AppCompatActivity() {
             startDelay = 300
         }.start()
     }
+
+
 
 }
