@@ -2,10 +2,15 @@ package com.isyaratku.app.ui.main.profile
 
 import android.content.Context
 import android.content.SharedPreferences
+<<<<<<< HEAD
+=======
+import android.util.Log
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+<<<<<<< HEAD
 import androidx.recyclerview.widget.RecyclerView
 import com.isyaratku.app.databinding.ItemDarkModeBinding
 import com.isyaratku.app.databinding.ItemHeaderBinding
@@ -18,6 +23,26 @@ class ProfileAdapter(
     private val darkModeSwitchListener: CompoundButton.OnCheckedChangeListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+=======
+import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
+import com.isyaratku.app.api.ApiConfig
+import com.isyaratku.app.databinding.ItemDarkModeBinding
+import com.isyaratku.app.databinding.ItemHeaderBinding
+import com.isyaratku.app.databinding.ItemProfileBinding
+import retrofit2.HttpException
+
+class ProfileAdapter(
+    private val context: Context,
+    private val items: List<profile_Item>,
+    private val listener: OnItemClickListerner,
+    private val darkModeSwitchListener: CompoundButton.OnCheckedChangeListener,
+    private val token: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
+
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
     interface OnItemClickListerner {
         fun onItemClick(position: Int)
     }
@@ -52,9 +77,15 @@ class ProfileAdapter(
                 (holder as HeaderViewHolder).binding.headerTitle.text = currentItem.title
             }
             profile_Item.TYPER_DARK_MODE -> {
+<<<<<<< HEAD
                 val isDarkModeEnabled = sharedPreferences.getBoolean("DARK_MODE", false)
                 val darkModeBinding = (holder as DarkModeViewHolder).binding
                 darkModeBinding.switchTheme.setOnCheckedChangeListener(null)
+=======
+                val isDarkModeEnabled = sharedPreferences.getBoolean("DARK_MODE",false )
+                val darkModeBinding = (holder as DarkModeViewHolder).binding
+                //darkModeBinding.switchTheme.setOnCheckedChangeListener(null)
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
                 darkModeBinding.switchTheme.isChecked = isDarkModeEnabled
                 darkModeBinding.switchTheme.setOnCheckedChangeListener(darkModeSwitchListener)
             }
@@ -62,6 +93,22 @@ class ProfileAdapter(
                 val profileBinding = (holder as ProfileViewHolder).binding
                 profileBinding.icon.setImageResource(currentItem.iconResId)
                 profileBinding.title.text = currentItem.title
+<<<<<<< HEAD
+=======
+                profileBinding.card.setOnClickListener{
+                    Log.d("card",currentItem.title.toString())
+                }
+
+                profileBinding.card.setOnClickListener{
+                    when(currentItem) { items.get(4) ->{
+                        requestLogin()
+
+                    }
+
+
+                    }
+                }
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
             }
         }
     }
@@ -73,16 +120,75 @@ class ProfileAdapter(
             binding.root.setOnClickListener(this)
         }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 listener.onItemClick(position)
             }
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
     }
 
     inner class HeaderViewHolder(val binding: ItemHeaderBinding) : RecyclerView.ViewHolder(binding.root)
 
     inner class DarkModeViewHolder(val binding: ItemDarkModeBinding) : RecyclerView.ViewHolder(binding.root)
+<<<<<<< HEAD
 }
+=======
+
+
+    private fun requestLogin() {
+
+
+        val  userToken : String = "Bearer $token"
+
+        // showLoading(true)
+
+
+            try {
+
+
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.logout(userToken)
+
+                // showLoading(false)
+
+                try {
+                    if (successResponse.message == "User logged out successfully") {
+
+
+                    } else {
+                        Log.e("logout", "logout failed")
+                        showToast("Logout Failed")
+                    }
+
+
+
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+                }
+
+
+            } catch (e: HttpException) {
+                // val errorBody = e.response()?.errorBody()?.string()
+                showToast("error")
+            }
+
+
+    }
+
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+}
+
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421

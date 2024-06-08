@@ -1,12 +1,16 @@
 package com.isyaratku.app.ui.main.cameraActivity
 
+<<<<<<< HEAD
 
 import SignLanguageDetectorHelper
+=======
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
+<<<<<<< HEAD
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -36,12 +40,30 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
     private lateinit var interpreter: Interpreter
     private lateinit var cameraExecutor: ExecutorService
     private var score: Int = 0
+=======
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
+
+import com.isyaratku.app.databinding.ActivityCameraBinding
+
+
+class CameraActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityCameraBinding
+    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var imageCapture: ImageCapture? = null
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+<<<<<<< HEAD
         detectionResultTextView = binding.detectionResultTextView
         pointv = binding.pointv
 
@@ -58,6 +80,13 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
                 CameraSelector.DEFAULT_FRONT_CAMERA
             else
                 CameraSelector.DEFAULT_BACK_CAMERA
+=======
+
+        binding.switchCamera.setOnClickListener {
+            cameraSelector = if (cameraSelector.equals(CameraSelector.DEFAULT_BACK_CAMERA))CameraSelector.DEFAULT_FRONT_CAMERA
+            else CameraSelector.DEFAULT_BACK_CAMERA
+
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
 
             startCamera()
         }
@@ -80,12 +109,15 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
+<<<<<<< HEAD
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, ImageAnalyzer())
                 }
 
+=======
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
             imageCapture = ImageCapture.Builder().build()
             try {
                 cameraProvider.unbindAll()
@@ -93,8 +125,12 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
                     this,
                     cameraSelector,
                     preview,
+<<<<<<< HEAD
                     imageCapture,
                     imageAnalyzer
+=======
+                    imageCapture
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
                 )
             } catch (exc: Exception) {
                 Toast.makeText(
@@ -107,6 +143,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
         }, ContextCompat.getMainExecutor(this))
     }
 
+<<<<<<< HEAD
     private inner class ImageAnalyzer : ImageAnalysis.Analyzer {
         override fun analyze(image: ImageProxy) {
             signLanguageDetectorHelper.detectSign(image)
@@ -114,6 +151,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
         }
     }
 
+=======
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
     private fun hideSystemUI() {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -130,6 +169,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
     companion object {
         private const val TAG = "CameraActivity"
         const val EXTRA_CAMERAX_IMAGE = "CameraX Image"
+<<<<<<< HEAD
     }
 
     fun onError(error: String) {
@@ -147,5 +187,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
             }
         }
         Log.i(TAG, "Detected sign: ${results.contentToString()}")
+=======
+        const val CAMERAX_RESULT = 200
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
     }
 }

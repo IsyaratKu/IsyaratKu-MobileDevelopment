@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        mlModelBinding = true
     }
     
 }
@@ -58,16 +59,25 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.circleimageview)
 
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
     implementation (libs.androidx.recyclerview)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.logging.interceptor)
 
+<<<<<<< HEAD
     implementation (libs.tensorflow.lite)
     implementation (libs.tensorflow.lite.gpu)
     implementation (libs.tensorflow.lite.support)
     implementation (libs.tensorflow.lite.metadata)
 
+=======
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+>>>>>>> 6024966cb1bdfdd84f416b9479cc894bd81f1421
 
 
 }
