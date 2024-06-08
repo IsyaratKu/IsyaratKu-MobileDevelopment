@@ -63,4 +63,11 @@ dependencies {
     implementation (libs.converter.gson)
     implementation (libs.logging.interceptor)
 
+    implementation (libs.tensorflow.lite)
+    implementation (libs.tensorflow.lite.gpu)
+    implementation (libs.tensorflow.lite.support)
+    implementation (libs.tensorflow.lite.metadata)
+
+
+
 }
