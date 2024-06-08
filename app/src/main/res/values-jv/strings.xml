@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Isyaratku</string>
+    <string name="title_home">Kaperluan</string>
+    <string name="title_dashboard">Papan Kendali</string>
+    <string name="title_rank">Peringkat</string>
+    <string name="title_profile">Profil</string>
+    <string name="title_camera">Kamera</string>
+
+    <string name="hello_blank_fragment">Halo fragmen kosong</string>
+    <string name="point">biji</string>
+    <string name="quotes">\"Basa isyarat iku padha karo omong, bisa kanggo analisis filsafat utawa kanggo ngobrol katresnan.\" ~ Oliver Sacks</string>
+</resources>

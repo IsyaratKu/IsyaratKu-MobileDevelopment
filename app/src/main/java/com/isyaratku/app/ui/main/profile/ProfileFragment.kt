@@ -1,8 +1,10 @@
 package com.isyaratku.app.ui.main.profile
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -119,6 +121,13 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
 
     override fun onItemClick(position: Int) {
         Toast.makeText(context, "Clicked: $position", Toast.LENGTH_SHORT).show()
+        val item = (binding.recyclerViewProfile.adapter as ProfileAdapter).items[position]
+        when(item.title){
+            "Language"->{
+                val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun requestUser(token: String) {
