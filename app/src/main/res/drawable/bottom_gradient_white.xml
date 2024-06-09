@@ -3,5 +3,5 @@
     android:shape="rectangle">
     <gradient
         android:angle="1"
-        android:endColor="@color/white"  />
+        android:endColor="@color/md_theme_surface"  />
 </shape>

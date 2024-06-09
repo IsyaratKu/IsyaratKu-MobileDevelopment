@@ -29,6 +29,7 @@ import com.isyaratku.app.ui.account.register.RegisterActivity
 import com.isyaratku.app.ui.main.MainActivity
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class LoginActivity : AppCompatActivity() {
 
@@ -148,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                     if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
                         val token = successResponse.token.toString()
                         Log.d("Token", token)
-                        viewModel.saveSession(UserModel(email, token))
+                        viewModel.saveSession(UserModel(email, token, password))
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent,
@@ -163,6 +164,9 @@ class LoginActivity : AppCompatActivity() {
 
                 } catch (e: Exception) {
                     Log.e("JSON", "Error parsing JSON: ${e.message}")
+                } catch (e : SocketTimeoutException){
+                    Log.e("JSON", "Error No internet: ${e.message}")
+                    showToast("Internet not detected, Try Again")
                 }
 
 

@@ -9,11 +9,9 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.databinding.ItemDarkModeBinding
 import com.isyaratku.app.databinding.ItemHeaderBinding
 import com.isyaratku.app.databinding.ItemProfileBinding
-import retrofit2.HttpException
 
 class ProfileAdapter(
     private val context: Context,
@@ -75,7 +73,7 @@ class ProfileAdapter(
 
                 profileBinding.card.setOnClickListener{
                     when(currentItem) { items.get(4) ->{
-                        requestLogin()
+                        //requestLogin()
 
                     }
 
@@ -107,7 +105,7 @@ class ProfileAdapter(
     inner class DarkModeViewHolder(val binding: ItemDarkModeBinding) : RecyclerView.ViewHolder(binding.root)
 
 
-    private fun requestLogin() {
+    /* private fun requestLogin() {
 
 
         val  userToken : String = "Bearer $token"
@@ -116,7 +114,6 @@ class ProfileAdapter(
 
 
             try {
-
 
                 val apiService = ApiConfig.getApiService()
                 val successResponse = apiService.logout(userToken)
@@ -145,7 +142,7 @@ class ProfileAdapter(
             }
 
 
-    }
+    } */
 
 
     private fun showToast(message: String) {

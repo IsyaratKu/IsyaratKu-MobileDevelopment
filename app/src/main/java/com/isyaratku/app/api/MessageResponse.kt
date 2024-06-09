@@ -2,7 +2,7 @@ package com.isyaratku.app.api
 
 import com.google.gson.annotations.SerializedName
 
-data class RegisterResponse(
+data class MessageResponse(
 
 	@field:SerializedName("message")
 	val message: String? = null

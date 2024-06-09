@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,10 +14,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.isyaratku.app.R
+import com.isyaratku.app.api.ApiConfig
+import com.isyaratku.app.data.pref.UserModel
 import com.isyaratku.app.databinding.ActivityMainBinding
 import com.isyaratku.app.setting.SettingModelFactory
 import com.isyaratku.app.setting.SettingPreference
@@ -27,6 +31,8 @@ import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
 import com.isyaratku.app.ui.account.login.LoginActivity
 import com.isyaratku.app.ui.main.cameraActivity.CameraActivity
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var settingViewModel : SettingViewModel
+    private lateinit var email: String
+    private lateinit var password: String
 
     private var currentImageUri: Uri? = null
 
@@ -128,7 +136,56 @@ class MainActivity : AppCompatActivity() {
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
 
+            } else {
+                email = user.email
+                password = user.password
+                getToken()
             }
+        }
+    }
+
+    private fun getToken() {
+
+
+
+        lifecycleScope.launch {
+
+            try {
+
+                val jsonString = """
+                        {
+                          "email": "$email",
+                          "password": "$password"
+                        }
+                    """
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.login(jsonObject)
+
+
+                try {
+                    if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
+                        val token = successResponse.token.toString()
+                        Log.d("getToken", token)
+                        viewModel.saveSession(UserModel(email, token, password))
+
+                    } else {
+                        Log.e("Login", "Login failed")
+                    }
+
+
+
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+                }
+
+
+            } catch (e: HttpException) {
+                // val errorBody = e.response()?.errorBody()?.string()
+
+            }
+
         }
     }
 

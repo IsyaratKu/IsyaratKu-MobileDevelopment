@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface ApiService {
 
@@ -14,11 +15,6 @@ interface ApiService {
     suspend fun register(
         @Body jsonObject: JsonObject
     ): ResponseBody
-
-    @POST("logout")
-    fun logout(
-        @Header("Authorization") token: String,
-    ): RegisterResponse
 
 
     @POST("login")
@@ -34,6 +30,23 @@ interface ApiService {
     @GET("leaderboard")
     suspend fun getLeaderboard(
     ) : LeaderboardResponse
+
+    @PUT("change-username")
+    suspend fun changeUsername(
+        @Header("Authorization") token: String,
+        @Body jsonObject: JsonObject
+    ) : MessageResponse
+
+    @PUT("change-email")
+    suspend fun changeEmail(
+        @Header("Authorization") token: String,
+        @Body jsonObject: JsonObject
+    ) : MessageResponse
+
+    @POST("logout")
+    suspend fun logout(
+        @Header("Authorization") token: String,
+    ): MessageResponse
 
 
 }

@@ -15,12 +15,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.isyaratku.app.R
 import com.isyaratku.app.api.ApiConfig.getApiService
 import com.isyaratku.app.api.ErrorResponse
-import com.isyaratku.app.api.RegisterResponse
 import com.isyaratku.app.customview.AccButton
 import com.isyaratku.app.customview.AccEditText
 import com.isyaratku.app.databinding.ActivityRegisterBinding

@@ -2,20 +2,26 @@ package com.isyaratku.app.ui.main.profile
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CompoundButton
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.isyaratku.app.R
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.databinding.FragmentProfileBinding
@@ -26,6 +32,7 @@ import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
 
@@ -35,6 +42,9 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var settingViewModel: SettingViewModel
     private lateinit var token : String
+    private lateinit var username : String
+    private lateinit var email : String
+    private var currentImageUri: Uri? = null
 
     private val profileViewModel by viewModels<ProfileViewModel> {
         ViewModelFactory.getInstance(requireContext())
@@ -54,14 +64,18 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupAction()
+
+
         profileViewModel.getSession().observe(viewLifecycleOwner) { user ->
 
             token = user.token
             Log.d("token",token)
 
             requestUser(token)
+            changePhoto()
 
-            val profileItem = listOf(
+            /*val profileItem = listOf(
                 profile_Item(profile_Item.TYPER_HEADER, title = "Account Setting"),
                 profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_person_24, "Change Username"),
                 profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_lock_24, "Change Password"),
@@ -75,7 +89,7 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
 
             val adapter = ProfileAdapter(requireContext(), profileItem, this, darkModeSwitchListener, token)
             binding.recyclerViewProfile.layoutManager = LinearLayoutManager(context)
-            binding.recyclerViewProfile.adapter = adapter
+            binding.recyclerViewProfile.adapter = adapter */
 
         }
 
@@ -85,17 +99,24 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
 
         // Initialize ViewModel and observe theme settings
 
+        val switchTheme = binding.switchTheme
+
         val pref = SettingPreference.getInstance(requireContext().datastore)
         settingViewModel = ViewModelProvider(this, SettingModelFactory(pref)).get(SettingViewModel::class.java)
 
-        settingViewModel.getThemeSetting().observe(viewLifecycleOwner) { isDarkModeActive ->
+        settingViewModel.getThemeSetting().observe(viewLifecycleOwner) { isDarkModeActive : Boolean ->
             if (isDarkModeActive) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
+                switchTheme.isChecked = true
 
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                switchTheme.isChecked = false
             }
+        }
+
+        switchTheme.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            settingViewModel.saveThmSetting(isChecked)
         }
     }
 
@@ -105,11 +126,82 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
         profileViewModel.logout()
     } */
 
+    /*
     private val darkModeSwitchListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked : Boolean ->
         settingViewModel.saveThmSetting(isChecked)
         Log.d("iscek",isChecked.toString())
         buttonView.isChecked = isChecked
 
+    } */
+
+    private fun setupAction(){
+        binding.apply {
+            cardUsername.setOnClickListener {
+
+                val inflater = LayoutInflater.from(context) // Get LayoutInflater from context
+                val popUpView = inflater.inflate(R.layout.username_layout, null) // Inflate the layout
+
+                val width = 800
+                val height = ViewGroup.LayoutParams.WRAP_CONTENT
+                val focusable = true
+
+                val popUpWindow = PopupWindow(popUpView, width, height, focusable)
+
+                relative.post {
+                    popUpWindow.showAtLocation(relative, Gravity.CENTER, 0, 0)
+                }
+                val cancel = popUpView?.findViewById<Button>(R.id.cancelButton)
+                val ok = popUpView?.findViewById<Button>(R.id.okButton)
+
+                cancel?.setOnClickListener {
+                    popUpWindow.dismiss()
+                }
+                ok?.setOnClickListener {
+                    val newusername = popUpView?.findViewById<TextInputEditText>(R.id.newUsernameEditText)?.text
+                    Log.d("newUsername",newusername.toString())
+                    changeUsername(token,newusername.toString())
+                    popUpWindow.dismiss()
+
+                }
+
+            }
+            cardEmail.setOnClickListener {
+
+                val inflater = LayoutInflater.from(context) // Get LayoutInflater from context
+                val popUpView = inflater.inflate(R.layout.email_layout, null) // Inflate the layout
+
+                val width = 800
+                val height = ViewGroup.LayoutParams.WRAP_CONTENT
+                val focusable = true
+
+                val popUpWindow = PopupWindow(popUpView, width, height, focusable)
+
+                relative.post {
+                    popUpWindow.showAtLocation(relative, Gravity.CENTER, 0, 0)
+                }
+                val cancel = popUpView?.findViewById<Button>(R.id.cancelButton)
+                val ok = popUpView?.findViewById<Button>(R.id.okButton)
+
+                cancel?.setOnClickListener {
+                    popUpWindow.dismiss()
+                }
+                ok?.setOnClickListener {
+                    val newEmail = popUpView?.findViewById<TextInputEditText>(R.id.newEmailEditText)?.text
+                    Log.d("newEmail",newEmail.toString())
+                    changeEmail(token,newEmail.toString())
+                    popUpWindow.dismiss()
+
+                }
+
+
+            }
+            cardPassword.setOnClickListener {  }
+            cardLogout.setOnClickListener {
+                logout(token)
+            }
+            cardLanguage.setOnClickListener{ }
+            cardAccessibility.setOnClickListener {  }
+        }
     }
 
     override fun onDestroyView() {
@@ -131,7 +223,7 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
                 val tokenUser = "Bearer $token"
                 val apiService = ApiConfig.getApiService()
                 val successResponse = apiService.getProfile(tokenUser)
-                try {
+
 
                     binding.apply {
                         tvUsername.text = successResponse.user!!.username
@@ -142,21 +234,144 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
                             .centerCrop()
                             .into(ivProfile)
 
-                        showLoading(false)
+                        username = successResponse.user!!.username.toString()
+                        email = successResponse.user.email.toString()
+
                     }
+                    showLoading(false)
 
                 } catch (e: Exception) {
                     Log.e("JSON", "Error parsing JSON: ${e.message}")
-                }
-
-            } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                } catch (e : SocketTimeoutException){
+                    Log.e("JSON", "Error No internet: ${e.message}")
+                    showToast("Internet not detected")
+                } catch (e: HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    Log.e("JSON", "Error parsing JSON: ${errorBody}")
             }
         }
     }
 
+    private fun changeUsername(token: String, newUsername:String) {
+
+        lifecycleScope.launch {
+
+            showLoading(true)
+
+            try {
+                val tokenUser = "Bearer $token"
+                val apiService = ApiConfig.getApiService()
+                val jsonString = """
+                        {
+                          "oldUsername" : "$username",
+                          "newUsername" : "$newUsername"
+                        }
+                    """
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                binding.tvUsername.text = newUsername
+
+                apiService.changeUsername(tokenUser,jsonObject)
+                requestUser(tokenUser)
+                showToast("Username Changed")
+
+            } catch (e: Exception) {
+                Log.e("JSON", "Error parsing JSON: ${e.message}")
+            } catch (e : SocketTimeoutException){
+                Log.e("JSON", "Error No internet: ${e.message}")
+                showToast("Internet not detected")
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+            }
+            showLoading(false)
+        }
+    }
+
+    private fun changeEmail(token: String, newEmail:String) {
+
+        lifecycleScope.launch {
+
+            showLoading(true)
+
+            try {
+                val tokenUser = "Bearer $token"
+                val apiService = ApiConfig.getApiService()
+                val jsonString = """
+                        {
+                          "oldEmail" : "$email",
+                          "newEmail" : "$newEmail"
+                        }
+                    """
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+
+                apiService.changeEmail(tokenUser,jsonObject)
+
+                showToast("Email Changed")
+
+                profileViewModel.logout()
+
+            } catch (e: Exception) {
+                Log.e("JSON", "Error parsing JSON: ${e.message}")
+            } catch (e : SocketTimeoutException){
+                Log.e("JSON", "Error No internet: ${e.message}")
+                showToast("Internet not detected")
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+            }
+            showLoading(false)
+        }
+    }
+
+    private fun logout(token: String) {
+
+        lifecycleScope.launch {
+
+            showLoading(true)
+
+            try {
+                val tokenUser = "Bearer $token"
+                val apiService = ApiConfig.getApiService()
+                apiService.logout(tokenUser)
+
+                showToast("User Logout")
+
+                profileViewModel.logout()
+
+            } catch (e: Exception) {
+                Log.e("JSON", "Error parsing JSON: ${e.message}")
+            } catch (e : SocketTimeoutException){
+                Log.e("JSON", "Error No internet: ${e.message}")
+                showToast("Internet not detected")
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+            }
+            showLoading(false)
+        }
+    }
+
+    private fun changePhoto(){
+
+        binding.ivProfile.setOnClickListener {
+
+            // logic changephoto
+        }
+    }
+
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+
+    private fun showToast(message:String){
+        Toast.makeText(requireContext(),message,Toast.LENGTH_SHORT).show()
+    }
+
+
+
+
+
 }
