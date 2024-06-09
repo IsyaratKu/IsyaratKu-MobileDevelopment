@@ -1,9 +1,10 @@
 package com.isyaratku.app.ui.main.profile
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
-class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
+class ProfileFragment : Fragment() {
 
 
     private var _binding: FragmentProfileBinding? = null
@@ -44,7 +45,7 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
     private lateinit var token : String
     private lateinit var username : String
     private lateinit var email : String
-    private var currentImageUri: Uri? = null
+
 
     private val profileViewModel by viewModels<ProfileViewModel> {
         ViewModelFactory.getInstance(requireContext())
@@ -199,7 +200,10 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
             cardLogout.setOnClickListener {
                 logout(token)
             }
-            cardLanguage.setOnClickListener{ }
+            cardLanguage.setOnClickListener{
+                val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(intent)
+            }
             cardAccessibility.setOnClickListener {  }
         }
     }
@@ -209,9 +213,16 @@ class ProfileFragment : Fragment(), ProfileAdapter.OnItemClickListerner {
         _binding = null
     }
 
-    override fun onItemClick(position: Int) {
+    /* override fun onItemClick(position: Int) {
         Toast.makeText(context, "Clicked: $position", Toast.LENGTH_SHORT).show()
-    }
+        val item = (binding.recyclerViewProfile.adapter as ProfileAdapter).items[position]
+        when(item.title){
+            "Language"->{
+                val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(intent)
+            }
+        }
+    }*/
 
     private fun requestUser(token: String) {
 

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Isyaratku</string>
+    <string name="title_home">Beranda</string>
+    <string name="title_dashboard">Dasbor</string>
+    <string name="title_rank">Peringkat</string>
+    <string name="title_profile">Profil</string>
+    <string name="title_camera">Kamera</string>
+
+    <string name="hello_blank_fragment">Halo fragmen kosong</string>
+    <string name="point">poin</string>
+    <string name="quotes">\"Bahasa isyarat setara dengan bicara, cocok untuk analisis filosofis atau untuk membuat cinta.\" ~ Oliver Sacks</string>
+</resources>
