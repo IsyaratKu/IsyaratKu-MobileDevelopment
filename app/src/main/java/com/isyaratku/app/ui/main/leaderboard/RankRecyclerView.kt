@@ -26,7 +26,11 @@ class RankRecyclerView (private val userList: List<UsersItem?>?) : RecyclerView.
         val currentItem = userList!![position]
         holder.binding.apply {
             tvname.text = currentItem!!.username
-            tvpoint.text = currentItem.score.toString()
+            if (currentItem.score == null) {
+                tvpoint.text = "0"
+            } else {
+                tvpoint.text = currentItem.score.toString()
+            }
             Glide.with(card)
                 .load(currentItem.urlPhoto)
                 .centerCrop()

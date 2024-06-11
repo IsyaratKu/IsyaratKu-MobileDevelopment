@@ -7,7 +7,11 @@ import androidx.lifecycle.asLiveData
 import com.isyaratku.app.data.UserRepository
 import com.isyaratku.app.data.pref.UserModel
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel (private val repository: UserRepository) : ViewModel() {
+
+    fun getSession(): LiveData<UserModel> {
+        return repository.getSession().asLiveData()
+    }
 
 
     private val _text = MutableLiveData<String>().apply {

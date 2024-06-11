@@ -25,6 +25,7 @@ import com.isyaratku.app.customview.AccEditText
 import com.isyaratku.app.data.pref.UserModel
 import com.isyaratku.app.databinding.ActivityLoginBinding
 import com.isyaratku.app.ui.ViewModelFactory
+import com.isyaratku.app.ui.account.ForgotPasswordActivity
 import com.isyaratku.app.ui.account.register.RegisterActivity
 import com.isyaratku.app.ui.main.MainActivity
 import kotlinx.coroutines.launch
@@ -72,6 +73,10 @@ class LoginActivity : AppCompatActivity() {
 
         binding.tvRegister.setOnClickListener{
             val intent = Intent(this@LoginActivity,RegisterActivity::class.java)
+            startActivity(intent)
+        }
+        binding.tvForgotPassword.setOnClickListener {
+            val intent = Intent(this@LoginActivity,ForgotPasswordActivity::class.java)
             startActivity(intent)
         }
     }

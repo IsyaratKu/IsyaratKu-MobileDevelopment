@@ -1,6 +1,7 @@
 package com.isyaratku.app.api
 
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -11,39 +12,49 @@ import retrofit2.http.PUT
 interface ApiService {
 
 
-    @POST("register")
+    @POST("auth/register")
     suspend fun register(
         @Body jsonObject: JsonObject
     ): ResponseBody
 
+    @POST("auth/forgot-password")
+    suspend fun passwordChange(
+        @Body jsonObject: JsonObject
+    ): ResponseBody
 
-    @POST("login")
+    @POST("auth/login")
     suspend fun login(
         @Body jsonObject: JsonObject
     ): LoginResponse
 
-    @GET("user-info")
+    @GET("auth/user-info")
     suspend fun getProfile(
         @Header("Authorization") token: String,
     ) : UserInfoResponse
 
-    @GET("leaderboard")
+    @GET("challenge/leaderboard")
     suspend fun getLeaderboard(
     ) : LeaderboardResponse
 
-    @PUT("change-username")
+    @PUT("auth/change-photo")
+    suspend fun changeProfPicture(
+        @Header("Authorization") token: String,
+        @Body file: MultipartBody
+    ) : UploadPhotoResponse
+
+    @PUT("auth/change-username")
     suspend fun changeUsername(
         @Header("Authorization") token: String,
         @Body jsonObject: JsonObject
     ) : MessageResponse
 
-    @PUT("change-email")
+    @PUT("auth/change-email")
     suspend fun changeEmail(
         @Header("Authorization") token: String,
         @Body jsonObject: JsonObject
     ) : MessageResponse
 
-    @POST("logout")
+    @POST("auth/logout")
     suspend fun logout(
         @Header("Authorization") token: String,
     ): MessageResponse

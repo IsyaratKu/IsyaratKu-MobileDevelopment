@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +26,7 @@ import com.isyaratku.app.databinding.ActivityRegisterBinding
 import com.isyaratku.app.ui.account.login.LoginActivity
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -131,6 +133,7 @@ class RegisterActivity : AppCompatActivity() {
             val username: String = binding.usernameEditText.text.toString()
             try {
                 val intent = Intent(this@RegisterActivity,LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 intent.putExtra("email", email)
                 val jsonString = """
                         {
@@ -153,6 +156,9 @@ class RegisterActivity : AppCompatActivity() {
                 val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
                 showToast(errorResponse.error.toString())
                 showLoading(false)
+            } catch (e: SocketTimeoutException) {
+                Log.e("JSON", "Error No internet: ${e.message}")
+                showToast("Internet not detected")
             }
         }
     }
