@@ -35,7 +35,6 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     private lateinit var pointv: TextView
     private lateinit var signLanguageDetectorHelper: SignLanguageDetector
     private lateinit var aslDetectorHelper: ASLSignLanguageDetectorHelper
-    private lateinit var interpreter: Interpreter
     private lateinit var bisindoInterpreter: Interpreter
     private lateinit var aslInterpreter: Interpreter
     private lateinit var cameraExecutor: ExecutorService
