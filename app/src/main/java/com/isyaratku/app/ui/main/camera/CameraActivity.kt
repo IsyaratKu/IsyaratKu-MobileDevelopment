@@ -1,41 +1,45 @@
 package com.isyaratku.app.ui.main.cameraActivity
 
-import SignLanguageDetectorHelper
+import SignLanguageDetector
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.core.content.ContextCompat
 import com.isyaratku.app.R
-
 import com.isyaratku.app.databinding.ActivityCameraBinding
+import com.isyaratku.app.ui.main.camera.ASLSignLanguageDetectorHelper
+import com.isyaratku.app.ui.main.camera.CameraSetupManager
+import com.isyaratku.app.ui.main.camera.OverlayView
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
+import java.io.FileNotFoundException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorListener {
+class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListener {
     private lateinit var binding: ActivityCameraBinding
+    private lateinit var overlayView: OverlayView
     private lateinit var previewView: PreviewView
-    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private lateinit var detectionResultTextView: TextView
     private lateinit var pointv: TextView
-    private lateinit var signLanguageDetectorHelper: SignLanguageDetectorHelper
-    private var imageCapture: ImageCapture? = null
+    private lateinit var signLanguageDetectorHelper: SignLanguageDetector
+    private lateinit var aslDetectorHelper: ASLSignLanguageDetectorHelper
     private lateinit var interpreter: Interpreter
+    private lateinit var bisindoInterpreter: Interpreter
+    private lateinit var aslInterpreter: Interpreter
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var cameraSetupManager: CameraSetupManager
     private var score: Int = 0 // Variabel untuk menyimpan poin
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,74 +48,95 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
         setContentView(binding.root)
 
         detectionResultTextView = binding.detectionResultTextView
-        pointv= binding.pointv
-
-        val model = FileUtil.loadMappedFile(this, "bisindo_model.tflite")
-        interpreter = Interpreter(model)
-
+        pointv = binding.pointv
         previewView = binding.viewFinder
-        signLanguageDetectorHelper = SignLanguageDetectorHelper(this, interpreter, this)
+        overlayView = findViewById(R.id.overlay)
+        cameraSetupManager = CameraSetupManager(this, previewView, ImageAnalyzer())
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        binding.switchCamera.setOnClickListener {
-            cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            else
-                CameraSelector.DEFAULT_BACK_CAMERA
+        // Tampilkan dialog untuk memilih model
+        showModelSelectionDialog()
 
-            startCamera()
+        // Tambahkan listener untuk switch camera button
+        val switchCameraButton = findViewById<ImageView>(R.id.switchCamera)
+        switchCameraButton.setOnClickListener {
+            cameraSetupManager.switchCamera()
         }
     }
 
-    public override fun onResume() {
-        super.onResume()
-        hideSystemUI()
-        startCamera()
+    private fun showModelSelectionDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Pilih Model")
+        val models = arrayOf("ASL", "Bisindo")
+        builder.setItems(models) { dialog, which ->
+            when (which) {
+                0 -> initializeASLModel()
+                1 -> initializeBisindoModel()
+            }
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+    private fun initializeASLModel() {
+        try {
+            val aslModel = FileUtil.loadMappedFile(this, "asl_model.tflite")
+            aslInterpreter = Interpreter(aslModel)
+            aslDetectorHelper = ASLSignLanguageDetectorHelper(
+                this,
+                aslInterpreter,
+                object : ASLSignLanguageDetectorHelper.DetectorListener {
+                    override fun onResults(results: FloatArray) {
+                        handleResults(results, "ASL")
+                    }
+                })
+        } catch (e: FileNotFoundException) {
+            Log.e("CameraActivity", "ASL model file not found: ${e.message}")
+            Toast.makeText(this, "ASL model file not found", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Log.e("CameraActivity", "Error initializing ASL model: ${e.message}")
+        }
+    }
 
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                }
+    private fun initializeBisindoModel() {
+        try {
+            val bisindoModel = FileUtil.loadMappedFile(this, "bisindo_model.tflite")
+            bisindoInterpreter = Interpreter(bisindoModel)
+            signLanguageDetectorHelper = SignLanguageDetector(
+                this,
+                bisindoInterpreter,
+                object : SignLanguageDetector.DetectorListener {
+                    override fun onResults(results: FloatArray) {
+                        handleResults(results, "Bisindo")
+                    }
+                })
+        } catch (e: FileNotFoundException) {
+            Log.e("CameraActivity", "Bisindo model file not found: ${e.message}")
+            Toast.makeText(this, "Bisindo model file not found", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Log.e("CameraActivity", "Error initializing Bisindo model: ${e.message}")
+        }
+    }
 
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, ImageAnalyzer())
-                }
-
-            imageCapture = ImageCapture.Builder().build()
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this,
-                    cameraSelector,
-                    preview,
-                    imageCapture,
-                    imageAnalyzer
-                )
-            } catch (exc: Exception) {
-                Toast.makeText(
-                    this@CameraActivity,
-                    "Gagal Memunculkan Camera",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.e(TAG, "StartCamera : ${exc.message}")
-            }
-        }, ContextCompat.getMainExecutor(this))
+    override fun onResume() {
+        super.onResume()
+        try {
+            hideSystemUI()
+            cameraSetupManager.startCamera()
+        } catch (e: Exception) {
+            Log.e("CameraActivity", "Error in onResume: ${e.message}")
+        }
     }
 
     private inner class ImageAnalyzer : ImageAnalysis.Analyzer {
         override fun analyze(image: ImageProxy) {
-            signLanguageDetectorHelper.detectSign(image)
-            image.close() //
+            if (::aslDetectorHelper.isInitialized) {
+                aslDetectorHelper.detectSign(image)
+            } else if (::signLanguageDetectorHelper.isInitialized) {
+                signLanguageDetectorHelper.detectSign(image)
+            }
+            image.close()
         }
     }
 
@@ -128,25 +153,38 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetectorHelper.DetectorL
         supportActionBar?.hide()
     }
 
-    companion object {
-        private const val TAG = "CameraActivity"
-        const val EXTRA_CAMERAX_IMAGE = "CameraX Image"
-    }
+    private fun handleResults(results: FloatArray, modelType: String) {
+        val maxProbability = results.maxOrNull() ?: 0.0f
+        val maxIndex = results.indexOfFirst { it == maxProbability } // Find index of max value
+        if (maxProbability > 0.95) {
+            score += 10
+            playPointSound()
 
-    fun onError(error: String) {
-        Log.e(TAG, error)
-    }
-    override fun onResults(results: FloatArray) {
-        runOnUiThread {
-            val detectedSign = results.indices.maxByOrNull { results[it] } ?: -1
-            if (detectedSign != -1) {
-                score += 10 // Tambahkan poin jika ada deteksi yang valid
-                val detectedSignText = "Detected sign: ${detectedSign} in ${results[detectedSign]}"
-                detectionResultTextView.text = "$detectedSignText\n"
-                pointv.text = "$score"
-            }
         }
-        Log.i(TAG, "Detected sign: ${results.contentToString()}")
 
+        runOnUiThread {
+            pointv.text = "Score: $score"
+            detectionResultTextView.text =
+                "Detected sign at index: $maxIndex with probability: $maxProbability using model: $modelType"
+        }
+    }
+
+
+
+    private fun playPointSound() {
+        val pointSound = MediaPlayer.create(this, R.raw.sfx_point)
+        if (pointSound.isPlaying) {
+            pointSound.stop()
+            pointSound.release()
+        }
+        pointSound.start()
+    }
+
+    override fun onResults(results: FloatArray) {
+
+    }
+
+    companion object {
+        const val EXTRA_CAMERAX_IMAGE = "CameraX Image"
     }
 }

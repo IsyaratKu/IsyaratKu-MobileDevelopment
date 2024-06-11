@@ -1,12 +1,18 @@
+package com.isyaratku.app.ui.main.camera
+
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import androidx.camera.core.ImageProxy
 import org.tensorflow.lite.Interpreter
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class SignLanguageDetector(
+class ASLSignLanguageDetectorHelper(
     private val context: Context,
     private val interpreter: Interpreter,
     private val detectorListener: DetectorListener?
@@ -15,7 +21,7 @@ class SignLanguageDetector(
     fun detectSign(image: ImageProxy) {
         val bitmap = imageProxyToBitmap(image)
         val inputBuffer = convertBitmapToByteBuffer(bitmap)
-        val outputBuffer = Array(1) { FloatArray(26) }
+        val outputBuffer = Array(1) { FloatArray(26) }  // Sesuaikan output shape jika diperlukan
 
         // Run inference
         interpreter.run(inputBuffer, outputBuffer)
@@ -24,7 +30,6 @@ class SignLanguageDetector(
         val results = outputBuffer[0]
         detectorListener?.onResults(results)
     }
-
 
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
         val nv21Buffer = yuv420ToNv21(image)

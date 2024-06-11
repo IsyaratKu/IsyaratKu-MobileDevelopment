@@ -76,5 +76,4 @@ dependencies {
     implementation (libs.tensorflow.lite.gpu)
     implementation (libs.tensorflow.lite.support)
     implementation (libs.tensorflow.lite.metadata)
-
 }
