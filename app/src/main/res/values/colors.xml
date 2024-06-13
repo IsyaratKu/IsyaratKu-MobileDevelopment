@@ -4,6 +4,7 @@
     <color name="blue_background">#2196F3</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="LogoColor">#07396D</color>
     <color name="hyperlinkblue">#0000EE</color>
     <color name="bounding_box_color">#FF0000</color>
 
