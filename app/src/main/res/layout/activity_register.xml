@@ -54,7 +54,7 @@
         android:layout_marginTop="8dp"
         android:alpha="100"
         android:gravity="center"
-        android:text="Create Account to start the challenge now !!"
+        android:text="@string/title_register"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -70,7 +70,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:alpha="100"
-        android:text="Email"
+        android:text="@string/email"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Enter your Email"
+            android:hint="@string/enter_your_email"
             android:inputType="textEmailAddress"
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -105,7 +105,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:alpha="100"
-        android:text="Password"
+        android:text="@string/password"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:alpha="100"
-        android:text="Username"
+        android:text="@string/username"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +144,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Enter Username"
+            android:hint="@string/enter_username"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,6 +164,7 @@
         tools:alpha="100">
 
         <com.isyaratku.app.customview.AccEditText
+            android:hint="@string/password_hint"
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,7 +180,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:alpha="100"
-        android:text="Confirm Password"
+        android:text="@string/confirm_password"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -206,7 +207,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Confirm new Password"
+            android:hint="@string/confirm_new_password"
             android:inputType="textPassword"
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -219,7 +220,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         android:alpha="100"
-        android:text="Register"
+        android:text="@string/register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

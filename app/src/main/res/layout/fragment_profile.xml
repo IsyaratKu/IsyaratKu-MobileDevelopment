@@ -74,15 +74,36 @@
                 android:text=""
                 tools:text="email@email.com" />
 
-            <TextView
-                android:id="@+id/tvPoint"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
-                android:text=""
-                android:textSize="10sp"
-                tools:text="Point : 9123" />
+                >
+
+                <TextView
+                    android:id="@+id/tvAslScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text=""
+                    android:textSize="10sp"
+                    tools:text="@string/point_asl"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvBisindoScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text=""
+                    android:textSize="10sp"
+                    tools:text="@string/point_bisindo" />
+
+            </LinearLayout>
+
+
 
             <TextView
                 android:id="@+id/header_account"
@@ -119,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Change Username"
+                        android:text="@string/change_username"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -153,7 +174,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Change Email"
+                        android:text="@string/change_email"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -187,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Change Profile Picture"
+                        android:text="@string/change_profile_picture"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -221,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Log Out"
+                        android:text="@string/log_out"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -240,7 +261,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Dark Mode"
+                    android:text="@string/dark_mode"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -286,7 +307,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Language"
+                        android:text="@string/language"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -322,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:text="Accessibility"
+                        android:text="@string/accessibility"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 

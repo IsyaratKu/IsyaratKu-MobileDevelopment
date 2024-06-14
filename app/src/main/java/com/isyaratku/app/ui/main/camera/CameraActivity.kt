@@ -1,4 +1,4 @@
-package com.isyaratku.app.ui.main.cameraActivity
+package com.isyaratku.app.ui.main.camera
 
 import SignLanguageDetector
 import android.media.MediaPlayer
@@ -17,9 +17,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import com.isyaratku.app.R
 import com.isyaratku.app.databinding.ActivityCameraBinding
-import com.isyaratku.app.ui.main.camera.ASLSignLanguageDetectorHelper
-import com.isyaratku.app.ui.main.camera.CameraSetupManager
-import com.isyaratku.app.ui.main.camera.OverlayView
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.io.FileNotFoundException
@@ -153,7 +150,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     }
 
     private fun handleResults(results: FloatArray, modelType: String) {
-        val maxProbability = results.maxOrNull() ?: 0.0f
+        val maxProbability = results.maxOrNull() ?: 0.00f
+        val trimValue = String.format("%.3f",maxProbability)
         val maxIndex = results.indexOfFirst { it == maxProbability } // Find index of max value
         if (maxProbability > 0.95) {
             score += 10
@@ -161,10 +159,13 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
         }
 
+
+
+
         runOnUiThread {
             pointv.text = "Score: $score"
             detectionResultTextView.text =
-                "Detected sign at index: $maxIndex with probability: $maxProbability using model: $modelType"
+                "Detected sign at index: $maxIndex with probability: $trimValue using model: $modelType"
         }
     }
 

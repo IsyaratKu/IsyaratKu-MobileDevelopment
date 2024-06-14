@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.isyaratku.app.R
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.api.ErrorResponse
 import com.isyaratku.app.api.LeaderboardResponse
@@ -81,7 +82,7 @@ class RankFragment : Fragment() {
                 Gson().fromJson(errorBody, ErrorResponse::class.java)
             } catch (e: SocketTimeoutException) {
                 Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
+                showToast(getString(R.string.internet_not_detected))
             }
         }
     }

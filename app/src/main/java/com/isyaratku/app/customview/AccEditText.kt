@@ -13,7 +13,6 @@ class AccEditText @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        hint = "Insert your Password"
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
     }
 

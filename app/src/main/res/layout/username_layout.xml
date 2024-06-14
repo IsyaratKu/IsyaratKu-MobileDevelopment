@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Change Username"
+        android:text="@string/change_username"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             android:id="@+id/newUsernameEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint=" change username" />
+            android:hint="@string/change_username" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="cancel"
+        android:text="@string/cancel"
         app:layout_constraintEnd_toStartOf="@+id/okButton"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="ok"
+        android:text="@string/ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 

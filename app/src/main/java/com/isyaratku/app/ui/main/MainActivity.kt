@@ -30,7 +30,7 @@ import com.isyaratku.app.setting.SettingViewModel
 import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
 import com.isyaratku.app.ui.account.login.LoginActivity
-import com.isyaratku.app.ui.main.cameraActivity.CameraActivity
+import com.isyaratku.app.ui.main.camera.CameraActivity
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -62,6 +62,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getThemeSetting()
+        checkSession()
+
 
         val navView: BottomNavigationView = binding.navView
 
@@ -76,8 +79,9 @@ class MainActivity : AppCompatActivity() {
         // setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        getThemeSetting()
-        checkSession()
+
+
+
 
         binding.fabCamera.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, REQUIRED_PERMISSION) !=
@@ -114,9 +118,9 @@ class MainActivity : AppCompatActivity() {
         const val CAMERAX_RESULT = 200
     }
 
-    fun getThemeSetting(){
+    private fun getThemeSetting(){
         val pref = SettingPreference.getInstance(this.datastore)
-        settingViewModel = ViewModelProvider(this, SettingModelFactory(pref)).get(SettingViewModel::class.java)
+        settingViewModel = ViewModelProvider(this, SettingModelFactory(pref))[SettingViewModel::class.java]
 
         settingViewModel.getThemeSetting().observe(this) { isDarkModeActive ->
             if (isDarkModeActive) {
@@ -128,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun checkSession() {
+    private fun checkSession() {
 
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
@@ -136,16 +140,12 @@ class MainActivity : AppCompatActivity() {
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
 
-            } else {
-                email = user.email
-                password = user.password
-                getToken()
             }
         }
     }
 
-    private fun getToken() {
 
+    private fun getToken() {
 
 
         lifecycleScope.launch {
