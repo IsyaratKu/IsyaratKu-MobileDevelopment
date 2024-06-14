@@ -10,7 +10,7 @@ data class LeaderboardResponse(
 
 data class UsersItem(
 
-	@field:SerializedName("score")
+	@field:SerializedName("asl_score")
 	val score: Int? = null,
 
 	@field:SerializedName("url_photo")

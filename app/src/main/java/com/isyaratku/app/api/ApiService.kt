@@ -58,6 +58,17 @@ interface ApiService {
     suspend fun logout(
         @Header("Authorization") token: String,
     ): MessageResponse
+    @PUT("challenge/update-asl-score")
+    suspend fun aslScore(
+        @Header("Authorization") token: String,
+        @Body score: JsonObject
+    ): ASLResponse
+
+    @PUT("challenge/update-bisindo-score")
+    suspend fun bisindoScore(
+        @Header("Authorization") token: String,
+        @Body score: JsonObject
+    ): BisindoResponse
 
 
 }
