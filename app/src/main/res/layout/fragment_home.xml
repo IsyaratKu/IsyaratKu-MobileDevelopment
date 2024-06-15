@@ -26,13 +26,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
             <TextView
                 android:id="@+id/tvUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Username"
+                tools:text="Username"
                 android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -46,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Score Bisindo : 999"
+                tools:text="Score Bisindo : 999"
                 android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Score ASL : 999"
+                tools:text="Score ASL : 999"
                 android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"

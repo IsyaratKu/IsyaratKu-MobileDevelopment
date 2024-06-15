@@ -41,6 +41,18 @@ class HomeFragment : Fragment() {
     private lateinit var email: String
     private lateinit var password: String
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
+
+
+            Newsrv()
+
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,9 +70,6 @@ class HomeFragment : Fragment() {
             token = user.token
             Log.d("token", token)
             requestUser(token)
-
-            Newsrv()
-
 
         }
 
@@ -107,7 +116,6 @@ class HomeFragment : Fragment() {
                         .centerCrop()
                         .into(circleImageView)
 
-
                 }
 
 
@@ -129,6 +137,8 @@ class HomeFragment : Fragment() {
             lifecycleScope.launch {
 
 
+
+
                 ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
                     .enqueue(object : Callback<NewsResponse> {
                         override fun onResponse(
@@ -146,12 +156,13 @@ class HomeFragment : Fragment() {
                                 }
                                 newsAdapter.submitList(newsList)
                             } else {
-                                null
+
+                                showToast("Error Loading News")
                             }
                         }
 
                         override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                            showToast("Error")
+
                         }
                     })
 

@@ -26,9 +26,10 @@ class NewsAdapter : ListAdapter<ItemNews,NewsAdapter.MyViewHolder>(DiffCallback(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(getItem(position))
         val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_in_left)
         holder.itemView.startAnimation(animation)
+        holder.bind(getItem(position))
+
     }
 
 
