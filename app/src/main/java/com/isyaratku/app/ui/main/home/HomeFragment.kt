@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
         homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
 
 
-            Newsrv()
+
 
         }
 
@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         setupRecyclerView()
+        Newsrv()
 
         homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
 

@@ -2,19 +2,19 @@ package com.isyaratku.app.api
 
 import com.google.gson.annotations.SerializedName
 
-data class LeaderboardResponse(
+data class BisindoLeaderboardResponse(
 
 	@field:SerializedName("users")
-	val users: List<UsersItem?>? = null
+	val users: List<UsersItemBisindo?>? = null
 )
 
-data class UsersItem(
-
-	@field:SerializedName("asl_score")
-	val score: Int? = null,
+data class UsersItemBisindo(
 
 	@field:SerializedName("url_photo")
 	val urlPhoto: String? = null,
+
+	@field:SerializedName("bisindo_score")
+	val bisindoScore: String? = null,
 
 	@field:SerializedName("username")
 	val username: String? = null

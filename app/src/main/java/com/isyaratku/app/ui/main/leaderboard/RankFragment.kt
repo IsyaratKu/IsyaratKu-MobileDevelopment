@@ -1,32 +1,31 @@
 package com.isyaratku.app.ui.main.leaderboard
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.isyaratku.app.R
-import com.isyaratku.app.api.ApiConfig
-import com.isyaratku.app.api.ErrorResponse
-import com.isyaratku.app.api.LeaderboardResponse
 import com.isyaratku.app.databinding.FragmentRankBinding
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
 
 class RankFragment : Fragment() {
 
-    private lateinit var rvAdapter: RankRecyclerView
-    private lateinit var usersList: LeaderboardResponse
+    companion object {
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.tab_text_1,
+            R.string.tab_text_2
+        )
+    }
+
     private var _binding: FragmentRankBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -39,8 +38,14 @@ class RankFragment : Fragment() {
         _binding = FragmentRankBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        requestLogin()
 
+        val sectionsPagerAdapter = SectionsPagerAdapter(childFragmentManager,lifecycle)
+        val viewPager: ViewPager2 = binding.viewPager
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = binding.tabs
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.text = resources.getString(TAB_TITLES[position])
+        }.attach()
 
         return root
     }
@@ -50,48 +55,4 @@ class RankFragment : Fragment() {
         _binding = null
     }
 
-    private fun requestLogin() {
-
-
-        lifecycleScope.launch {
-
-            showLoading(true)
-
-            try {
-
-                val apiService = ApiConfig.getApiService()
-                val successResponse = apiService.getLeaderboard()
-                try {
-                    usersList = successResponse
-                    val userList = usersList.users
-
-                    binding.rvRank.apply {
-                        rvAdapter = RankRecyclerView(userList)
-                        layoutManager = LinearLayoutManager(requireContext())
-                        adapter = rvAdapter
-                        showLoading(false)
-
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("JSON", "Error parsing JSON: ${e.message}")
-                }
-
-            } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                Gson().fromJson(errorBody, ErrorResponse::class.java)
-            } catch (e: SocketTimeoutException) {
-                Log.e("JSON", "Error No internet: ${e.message}")
-                showToast(getString(R.string.internet_not_detected))
-            }
-        }
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
 }

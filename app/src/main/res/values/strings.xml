@@ -53,6 +53,9 @@
     <string name="image_uploading_in_process">Image Uploading in Process</string>
     <string name="image_updated">Image Updated</string>
     <string name="no_image_selected">No Image Selected</string>
+
+    <string name="tab_text_1">ASL</string>
+    <string name="tab_text_2">Bisindo</string>
 </resources>
 
 

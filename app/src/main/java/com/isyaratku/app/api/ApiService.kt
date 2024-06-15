@@ -34,9 +34,15 @@ interface ApiService {
         @Header("Authorization") token: String,
     ) : UserInfoResponse
 
-    @GET("challenge/leaderboard")
-    suspend fun getLeaderboard(
-    ) : LeaderboardResponse
+    @GET("challenge/leaderboard-asl")
+    suspend fun getLeaderboardAsl(
+        @Header("Authorization") token: String,
+    ) : AslLeaderboardResponse
+
+    @GET("challenge/leaderboard-bisindo")
+    suspend fun getLeaderboardBisindo(
+        @Header("Authorization") token: String,
+    ) : BisindoLeaderboardResponse
 
     @PUT("auth/change-photo")
     suspend fun changeProfPicture(

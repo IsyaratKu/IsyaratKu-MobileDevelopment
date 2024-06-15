@@ -9,6 +9,8 @@ import com.isyaratku.app.ui.account.login.LoginViewModel
 import com.isyaratku.app.ui.main.MainViewModel
 import com.isyaratku.app.ui.main.camera.CameraViewModel
 import com.isyaratku.app.ui.main.home.HomeViewModel
+import com.isyaratku.app.ui.main.leaderboard.asl.AslViewModel
+import com.isyaratku.app.ui.main.leaderboard.bisindo.BisindoViewModel
 import com.isyaratku.app.ui.main.profile.ProfileViewModel
 import com.isyaratku.app.ui.splashscreen.SplashViewModel
 
@@ -34,6 +36,12 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             }
             modelClass.isAssignableFrom(CameraViewModel::class.java) -> {
                 CameraViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(BisindoViewModel::class.java) -> {
+                BisindoViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(AslViewModel::class.java) -> {
+                AslViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.circleimageview)
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
     implementation(libs.androidx.camera.camera2)
     implementation(libs.camera.lifecycle)
