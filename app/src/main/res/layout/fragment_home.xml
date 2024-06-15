@@ -33,11 +33,12 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Username"
-                android:textColor="#FBF8F2"
+                android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/circleImageView"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <TextView
                 android:id="@+id/tvBisindoScore"
@@ -46,7 +47,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Score Bisindo : 999"
-                android:textColor="#FBF8F2"
+                android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/circleImageView"
@@ -60,7 +61,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="Score ASL : 999"
-                android:textColor="#FBF8F2"
+                android:textColor="@color/md_theme_tertiaryContainer"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tvBisindoScore"
@@ -110,7 +111,13 @@
         android:id="@+id/tvnewsrc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tvDesc" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+        tools:listitem="@layout/news_layout" />
 
 
     <com.google.android.material.progressindicator.CircularProgressIndicator

@@ -119,38 +119,43 @@ class HomeFragment : Fragment() {
                 showToast("Internet not detected")
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                Log.e("JSON", "Error parsing JSON: $errorBody")
             }
         }
         }
 
         private fun Newsrv() {
 
-            ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
-                .enqueue(object : Callback<NewsResponse> {
-                    override fun onResponse(
-                        call: Call<NewsResponse>,
-                        response: Response<NewsResponse>
-                    ) {
-                        if (response.isSuccessful) {
-                            val article = response.body()?.articles ?: emptyList()
-                            val newsList = article.mapNotNull { articles ->
-                                if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
-                                    ItemNews(articles.title, articles.urlToImage, articles.url)
-                                } else {
-                                    null
-                                }
-                            }
-                            newsAdapter.submitList(newsList)
-                        } else {
-                            null
-                        }
-                    }
+            lifecycleScope.launch {
 
-                    override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                        showToast("Error")
-                    }
-                })
+
+                ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
+                    .enqueue(object : Callback<NewsResponse> {
+                        override fun onResponse(
+                            call: Call<NewsResponse>,
+                            response: Response<NewsResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                val article = response.body()?.articles ?: emptyList()
+                                val newsList = article.mapNotNull { articles ->
+                                    if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
+                                        ItemNews(articles.title, articles.urlToImage, articles.url)
+                                    } else {
+                                        null
+                                    }
+                                }
+                                newsAdapter.submitList(newsList)
+                            } else {
+                                null
+                            }
+                        }
+
+                        override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
+                            showToast("Error")
+                        }
+                    })
+
+            }
 
 
         }

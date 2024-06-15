@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -18,6 +19,7 @@ import com.isyaratku.app.api.ItemNews
 class NewsAdapter : ListAdapter<ItemNews,NewsAdapter.MyViewHolder>(DiffCallback()) {
 
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view =  LayoutInflater.from(parent.context).inflate(R.layout.news_layout,parent,false)
         return MyViewHolder(view)
@@ -25,6 +27,8 @@ class NewsAdapter : ListAdapter<ItemNews,NewsAdapter.MyViewHolder>(DiffCallback(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.bind(getItem(position))
+        val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_in_left)
+        holder.itemView.startAnimation(animation)
     }
 
 
@@ -33,11 +37,13 @@ class NewsAdapter : ListAdapter<ItemNews,NewsAdapter.MyViewHolder>(DiffCallback(
         private val imgNews: ImageView = itemView.findViewById(R.id.NewsImg)
 
         fun bind(itemNews: ItemNews) {
+
             tvTitle.text = itemNews.title
             if (!itemNews.imageUrl.isNullOrEmpty()) {
                 Glide.with(itemView.context)
                     .load(itemNews.imageUrl)
                     .placeholder(R.drawable.ic_place_holder)
+                    .centerCrop()
                     .error(R.drawable.ic_place_holder)
                     .into(imgNews)
 

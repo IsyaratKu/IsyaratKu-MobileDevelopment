@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.isyaratku.app.R
 import com.isyaratku.app.api.UsersItem
 import com.isyaratku.app.databinding.RankLayoutBinding
 
@@ -34,6 +35,7 @@ class RankRecyclerView (private val userList: List<UsersItem?>?) : RecyclerView.
                 Glide.with(card)
                     .load(currentItem.urlPhoto)
                     .centerCrop()
+                    .error(R.drawable.baseline_person_24)
                     .into(storyImage)
 
 
