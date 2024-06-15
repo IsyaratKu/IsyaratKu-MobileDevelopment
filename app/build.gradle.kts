@@ -25,6 +25,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug{
+            buildConfigField("String", "API_KEY", "\"abfc2e93b99341629df7e2f072e25140\"")
+            buildConfigField("String", "BASE_URL", "\"https://isyaratku-backend-md2pu7pc6q-et.a.run.app/\"")
+            buildConfigField("String", "NEWS_URL", "\"https://newsapi.org/v2/\"")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -36,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         mlModelBinding = true
+        buildConfig = true
     }
     
 }

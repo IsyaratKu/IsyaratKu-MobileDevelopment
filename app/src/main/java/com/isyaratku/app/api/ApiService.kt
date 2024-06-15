@@ -3,11 +3,13 @@ package com.isyaratku.app.api
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -70,5 +72,12 @@ interface ApiService {
         @Body score: JsonObject
     ): BisindoResponse
 
+
+    @GET("everything")
+    fun ASLNews(
+        @Query("q") query:String,
+        @Query("language") language: String,
+        @Query("apikey") apiKey:String
+    ): Call<NewsResponse>
 
 }

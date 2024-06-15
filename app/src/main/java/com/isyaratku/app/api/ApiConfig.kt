@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.isyaratku.app.BuildConfig
 
 object ApiConfig {
     fun getApiService(): ApiService {
@@ -22,10 +23,13 @@ object ApiConfig {
             .addInterceptor(authInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://isyaratku-backend-md2pu7pc6q-et.a.run.app/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
         return retrofit.create(ApiService::class.java)
     }
+
+    const val BASE_URL = BuildConfig.BASE_URL
+
 }
