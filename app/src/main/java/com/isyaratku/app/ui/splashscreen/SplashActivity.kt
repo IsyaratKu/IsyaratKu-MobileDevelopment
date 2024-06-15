@@ -5,23 +5,25 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.isyaratku.app.R
+import com.isyaratku.app.api.ApiConfig
+import com.isyaratku.app.data.pref.UserModel
 import com.isyaratku.app.databinding.ActivitySplashBinding
-import com.isyaratku.app.setting.SettingModelFactory
-import com.isyaratku.app.setting.SettingPreference
-import com.isyaratku.app.setting.SettingViewModel
-import com.isyaratku.app.setting.datastore
 import com.isyaratku.app.ui.ViewModelFactory
 import com.isyaratku.app.ui.account.login.LoginActivity
 import com.isyaratku.app.ui.main.MainActivity
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class SplashActivity : AppCompatActivity() {
 
@@ -30,7 +32,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private lateinit var binding : ActivitySplashBinding
-    private lateinit var settingViewModel : SettingViewModel
+    private lateinit var email: String
+    private lateinit var password: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -58,6 +61,11 @@ class SplashActivity : AppCompatActivity() {
                     startActivity(intent)
                 },2000)
             } else {
+
+                email = user.email
+                password = user.password
+                getToken()
+
                 Handler().postDelayed({
                     val intent = Intent(this@SplashActivity,MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -83,6 +91,49 @@ class SplashActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun getToken() {
+
+
+        lifecycleScope.launch {
+
+            try {
+
+                val jsonString = """
+                        {
+                          "email": "$email",
+                          "password": "$password"
+                        }
+                    """
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.login(jsonObject)
+
+
+                try {
+                    if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
+                        val token = successResponse.token.toString()
+                        Log.d("getToken", token)
+                        viewModel.saveSession(UserModel(email, token, password))
+
+                    } else {
+                        Log.e("Login", "Login failed")
+                    }
+
+
+
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+                }
+
+
+            } catch (e: HttpException) {
+                // val errorBody = e.response()?.errorBody()?.string()
+
+            }
+
+        }
+    }
 
 
 }

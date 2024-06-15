@@ -1,9 +1,11 @@
 package com.isyaratku.app.ui.main.camera
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import android.Manifest
-import android.util.Log
-import androidx.core.content.PermissionChecker
 import com.isyaratku.app.databinding.FragmentCameraBinding
-import com.isyaratku.app.ui.main.cameraActivity.CameraActivity
 
 class CameraFragment : Fragment() {
 

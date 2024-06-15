@@ -5,53 +5,64 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
-    app:cardElevation="4dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="24dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:backgroundTint="@color/md_theme_surfaceDim">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/storyImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/def_profile"/>
-
-        <TextView
-            android:id="@+id/tvname"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Title Story"
-            android:textSize="20sp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/storyImage"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="16dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/storyImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
 
-        <TextView
-            android:id="@+id/tvpoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.971"
-            app:layout_constraintStart_toEndOf="@+id/tvname"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.509"
-            tools:text="99999" />
+                android:src="@drawable/def_profile"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/storyImage"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Title Story" />
+
+            <TextView
+                android:id="@+id/tvpoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.971"
+                app:layout_constraintStart_toEndOf="@+id/tvname"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.509"
+                tools:text="99999" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.cardview.widget.CardView>

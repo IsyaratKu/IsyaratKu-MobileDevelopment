@@ -8,13 +8,13 @@ data class LoginResponse(
 	val message: String? = null,
 
 	@field:SerializedName("user")
-	val user: User? = null,
+	val user: profileUser? = null,
 
 	@field:SerializedName("token")
 	val token: String? = null
 )
 
-data class User(
+data class profileUser(
 
 	@field:SerializedName("uid")
 	val uid: String? = null,

@@ -1,22 +1,6 @@
 package com.isyaratku.app.ui.main.profile
 
 
-
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.provider.Settings
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.CompoundButton
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
-import androidx.recyclerview.widget.RecyclerView
-import com.isyaratku.app.databinding.ItemDarkModeBinding
-import com.isyaratku.app.databinding.ItemHeaderBinding
-import com.isyaratku.app.databinding.ItemProfileBinding
 /*
 class ProfileAdapter(
     private val context: Context,

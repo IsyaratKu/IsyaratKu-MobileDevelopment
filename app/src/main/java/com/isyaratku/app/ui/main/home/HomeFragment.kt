@@ -15,6 +15,11 @@ import com.isyaratku.app.api.ApiClient
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.api.ItemNews
 import com.isyaratku.app.api.NewsResponse
+
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.isyaratku.app.data.pref.UserModel
+
 import com.isyaratku.app.databinding.FragmentHomeBinding
 import com.isyaratku.app.ui.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -33,6 +38,8 @@ class HomeFragment : Fragment() {
     }
     private val binding get() = _binding!!
     private lateinit var token: String
+    private lateinit var email: String
+    private lateinit var password: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,11 +54,13 @@ class HomeFragment : Fragment() {
 
         homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
 
+
             token = user.token
             Log.d("token", token)
-
             requestUser(token)
+
             Newsrv()
+
 
         }
 
@@ -68,6 +77,7 @@ class HomeFragment : Fragment() {
         binding.tvnewsrc.layoutManager = LinearLayoutManager(requireContext())
         binding.tvnewsrc.adapter = newsAdapter
     }
+
     private fun requestUser(token: String) {
 
         lifecycleScope.launch {
@@ -82,69 +92,127 @@ class HomeFragment : Fragment() {
 
                 binding.apply {
                     tvUsername.text = successResponse.user!!.username
+
                     if (successResponse.user.score == null) {
                         tvScore.text = "Point : 0"
-                    } else {
-                        tvScore.text = "Point : ${successResponse.user.score}"
+
+                        if (successResponse.user.aslScore == null) {
+                            tvAslScore.text = "Point ASL : 0"
+
+                        } else {
+                            tvAslScore.text = "Point ASL : ${successResponse.user.aslScore}"
+                        }
+                        if (successResponse.user.bisindoScore == null) {
+                            tvBisindoScore.text = "Point Bisindo : 0"
+                        } else {
+                            tvBisindoScore.text =
+                                "Point Bisindo : ${successResponse.user.bisindoScore}"
+                        }
+                        Glide.with(requireContext())
+                            .load(successResponse.user.urlPhoto)
+                            .centerCrop()
+                            .into(circleImageView)
+
+
                     }
-                    Glide.with(requireContext())
-                        .load(successResponse.user.urlPhoto)
-                        .centerCrop()
-                        .into(circleImageView)
 
 
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+
+                } catch (e: SocketTimeoutException) {
+                    Log.e("JSON", "Error No internet: ${e.message}")
+                    showToast("Internet not detected")
+                } catch (e: HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    Log.e("JSON", "Error parsing JSON: ${errorBody}")
                 }
-
-
-            } catch (e: Exception) {
-                Log.e("JSON", "Error parsing JSON: ${e.message}")
-            } catch (e: SocketTimeoutException) {
-                Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
-            } catch (e: HttpException) {
-                val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
             }
         }
-    }
 
-    private fun Newsrv() {
+        <<<<<<< HEAD
+        private fun Newsrv() {
 
-        ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
-            .enqueue(object : Callback<NewsResponse> {
-                override fun onResponse(
-                    call: Call<NewsResponse>,
-                    response: Response<NewsResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val article = response.body()?.articles ?: emptyList()
-                        val newsList = article.mapNotNull { articles ->
-                            if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
-                                ItemNews(articles.title, articles.urlToImage, articles.url)
-                            } else {
-                                null
+            ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
+                .enqueue(object : Callback<NewsResponse> {
+                    override fun onResponse(
+                        call: Call<NewsResponse>,
+                        response: Response<NewsResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val article = response.body()?.articles ?: emptyList()
+                            val newsList = article.mapNotNull { articles ->
+                                if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
+                                    ItemNews(articles.title, articles.urlToImage, articles.url)
+                                } else {
+                                    null
+                                }
                             }
+                            newsAdapter.submitList(newsList)
+                        } else {
+                            null
                         }
-                        newsAdapter.submitList(newsList)
-                    } else {
-                        null
                     }
+
+                    override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
+                        showToast("Error")
+                    }
+                })
+
+
+        }
+
+        private fun getToken() {
+
+
+            lifecycleScope.launch {
+
+                try {
+
+                    val jsonString = """
+                        {
+                          "email": "$email",
+                          "password": "$password"
+                        }
+                    """
+                    val gson = Gson()
+                    val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                    val apiService = ApiConfig.getApiService()
+                    val successResponse = apiService.login(jsonObject)
+
+
+                    try {
+                        if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
+                            val token = successResponse.token.toString()
+                            Log.d("getToken", token)
+                            homeViewModel.saveSession(UserModel(email, token, password))
+
+                        } else {
+                            Log.e("Login", "Login failed")
+                        }
+
+
+                    } catch (e: Exception) {
+                        Log.e("JSON", "Error parsing JSON: ${e.message}")
+                    }
+
+
+                } catch (e: HttpException) {
+                    // val errorBody = e.response()?.errorBody()?.string()
+
                 }
 
-                override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                    showToast("Error")
-                }
-            })
+            }
+        }
 
 
-    }
+        private fun showLoading(isLoading: Boolean) {
+            binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
 
+        private fun showToast(message: String) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -3,7 +3,6 @@ package com.isyaratku.app.ui.main.dashboard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.isyaratku.app.data.UserRepository
 
 class DashboardViewModel : ViewModel() {
 

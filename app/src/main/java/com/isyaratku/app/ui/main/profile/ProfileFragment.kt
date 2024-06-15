@@ -113,7 +113,7 @@ class ProfileFragment : Fragment() {
 
         val pref = SettingPreference.getInstance(requireContext().datastore)
         settingViewModel =
-            ViewModelProvider(this, SettingModelFactory(pref)).get(SettingViewModel::class.java)
+            ViewModelProvider(this, SettingModelFactory(pref))[SettingViewModel::class.java]
 
         settingViewModel.getThemeSetting()
             .observe(viewLifecycleOwner) { isDarkModeActive: Boolean ->
@@ -171,7 +171,7 @@ class ProfileFragment : Fragment() {
                 }
                 ok?.setOnClickListener {
                     val newusername =
-                        popUpView?.findViewById<TextInputEditText>(R.id.newUsernameEditText)?.text
+                        popUpView.findViewById<TextInputEditText>(R.id.newUsernameEditText)?.text
                     Log.d("newUsername", newusername.toString())
                     changeUsername(token, newusername.toString())
                     popUpWindow.dismiss()
@@ -201,7 +201,7 @@ class ProfileFragment : Fragment() {
                 }
                 ok?.setOnClickListener {
                     val newEmail =
-                        popUpView?.findViewById<TextInputEditText>(R.id.newEmailEditText)?.text
+                        popUpView.findViewById<TextInputEditText>(R.id.newEmailEditText)?.text
                     Log.d("newEmail", newEmail.toString())
                     changeEmail(token, newEmail.toString())
                     popUpWindow.dismiss()
@@ -260,17 +260,22 @@ class ProfileFragment : Fragment() {
                 binding.apply {
                     tvUsername.text = successResponse.user!!.username
                     tvEmail.text = successResponse.user.email
-                    if (successResponse.user.score == null){
-                        tvPoint.text = "Point : 0"
+                    if (successResponse.user.bisindoScore == null){
+                        tvBisindoScore.text = getString(R.string.point_bisindo,"0")
                     } else {
-                        tvPoint.text = "Point : ${successResponse.user.score}"
+                        tvBisindoScore.text = getString(R.string.point_bisindo,successResponse.user.bisindoScore)
+                    }
+                    if (successResponse.user.aslScore == null){
+                        tvAslScore.text = getString(R.string.point_asl,"0")
+                    } else {
+                        tvAslScore.text = getString(R.string.point_bisindo,successResponse.user.aslScore)
                     }
                     Glide.with(requireContext())
                         .load(successResponse.user.urlPhoto)
                         .centerCrop()
                         .into(ivProfile)
 
-                    username = successResponse.user!!.username.toString()
+                    username = successResponse.user.username.toString()
                     email = successResponse.user.email.toString()
 
                 }
@@ -280,10 +285,10 @@ class ProfileFragment : Fragment() {
                 Log.e("JSON", "Error parsing JSON: ${e.message}")
             } catch (e: SocketTimeoutException) {
                 Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
+                showToast(getString(R.string.internet_not_detected))
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                Log.e("JSON", "Error parsing JSON: $errorBody")
             }
         }
     }
@@ -309,16 +314,16 @@ class ProfileFragment : Fragment() {
 
                 apiService.changeUsername(tokenUser, jsonObject)
                 requestUser(tokenUser)
-                showToast("Username Changed")
+                showToast(getString(R.string.username_changed))
 
             } catch (e: Exception) {
                 Log.e("JSON", "Error parsing JSON: ${e.message}")
             } catch (e: SocketTimeoutException) {
                 Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
+                showToast(getString(R.string.internet_not_detected))
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                Log.e("JSON", "Error parsing JSON: $errorBody")
             }
             showLoading(false)
         }
@@ -344,7 +349,7 @@ class ProfileFragment : Fragment() {
 
                 apiService.changeEmail(tokenUser, jsonObject)
 
-                showToast("Email Changed")
+                showToast(getString(R.string.email_changed))
 
                 profileViewModel.logout()
 
@@ -352,10 +357,10 @@ class ProfileFragment : Fragment() {
                 Log.e("JSON", "Error parsing JSON: ${e.message}")
             } catch (e: SocketTimeoutException) {
                 Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
+                showToast(getString(R.string.internet_not_detected))
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                Log.e("JSON", "Error parsing JSON: $errorBody")
             }
             showLoading(false)
         }
@@ -372,7 +377,7 @@ class ProfileFragment : Fragment() {
                 val apiService = ApiConfig.getApiService()
                 apiService.logout(tokenUser)
 
-                showToast("User Logout")
+                showToast(getString(R.string.user_logout))
 
                 profileViewModel.logout()
 
@@ -380,10 +385,10 @@ class ProfileFragment : Fragment() {
                 Log.e("JSON", "Error parsing JSON: ${e.message}")
             } catch (e: SocketTimeoutException) {
                 Log.e("JSON", "Error No internet: ${e.message}")
-                showToast("Internet not detected")
+                showToast(getString(R.string.internet_not_detected))
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()
-                Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                Log.e("JSON", "Error parsing JSON: $errorBody")
             }
             showLoading(false)
         }
@@ -402,7 +407,7 @@ class ProfileFragment : Fragment() {
         if (uri != null) {
             currentImageUri = uri
             uploadImage()
-            showToast("Image Uploading in Process")
+            showToast(getString(R.string.image_uploading_in_process))
         } else {
             Log.d("Photo Picker", "No media selected")
         }
@@ -426,7 +431,7 @@ class ProfileFragment : Fragment() {
                     val apiService = ApiConfig.getApiService()
                     apiService.changeProfPicture(tokenUser, body)
 
-                    showToast("Image Updated")
+                    showToast(getString(R.string.image_updated))
 
                     requestUser(token)
 
@@ -435,14 +440,14 @@ class ProfileFragment : Fragment() {
                     Log.e("JSON", "Error parsing JSON: ${e.message}")
                 } catch (e: SocketTimeoutException) {
                     Log.e("JSON", "Error No internet: ${e.message}")
-                    showToast("Internet not detected")
+                    showToast(getString(R.string.internet_not_detected))
                 } catch (e: HttpException) {
                     val errorBody = e.response()?.errorBody()?.string()
-                    Log.e("JSON", "Error parsing JSON: ${errorBody}")
+                    Log.e("JSON", "Error parsing JSON: $errorBody")
                 }
             }
 
-        } ?: showToast("No Image Selected")
+        } ?: showToast(getString(R.string.no_image_selected))
     }
 
 

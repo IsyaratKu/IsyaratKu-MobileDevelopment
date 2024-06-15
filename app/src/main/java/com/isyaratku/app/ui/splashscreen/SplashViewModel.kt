@@ -13,4 +13,10 @@ class SplashViewModel (private val repository: UserRepository) : ViewModel() {
         return repository.getSession().asLiveData()
     }
 
+    fun saveSession(user: UserModel) {
+        viewModelScope.launch {
+            repository.saveSession(user)
+        }
+    }
+
 }

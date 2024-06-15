@@ -31,10 +31,12 @@ class RankRecyclerView (private val userList: List<UsersItem?>?) : RecyclerView.
             } else {
                 tvpoint.text = currentItem.score.toString()
             }
-            Glide.with(card)
-                .load(currentItem.urlPhoto)
-                .centerCrop()
-                .into(storyImage)
+                Glide.with(card)
+                    .load(currentItem.urlPhoto)
+                    .centerCrop()
+                    .into(storyImage)
+
+
 
 
         }
