@@ -92,45 +92,38 @@ class HomeFragment : Fragment() {
 
                 binding.apply {
                     tvUsername.text = successResponse.user!!.username
-
-                    if (successResponse.user.score == null) {
-                        tvScore.text = "Point : 0"
-
-                        if (successResponse.user.aslScore == null) {
-                            tvAslScore.text = "Point ASL : 0"
-
-                        } else {
-                            tvAslScore.text = "Point ASL : ${successResponse.user.aslScore}"
-                        }
-                        if (successResponse.user.bisindoScore == null) {
-                            tvBisindoScore.text = "Point Bisindo : 0"
-                        } else {
-                            tvBisindoScore.text =
-                                "Point Bisindo : ${successResponse.user.bisindoScore}"
-                        }
-                        Glide.with(requireContext())
-                            .load(successResponse.user.urlPhoto)
-                            .centerCrop()
-                            .into(circleImageView)
-
-
+                    if (successResponse.user.aslScore == null ){
+                        tvAslScore.text = "Point ASL : 0"
+                    } else {
+                        tvAslScore.text = "Point ASL : ${successResponse.user.aslScore}"
                     }
+                    if (successResponse.user.bisindoScore == null ){
+                        tvBisindoScore.text = "Point Bisindo : 0"
+                    } else {
+                        tvBisindoScore.text = "Point Bisindo : ${successResponse.user.bisindoScore}"
+                    }
+                    Glide.with(requireContext())
+                        .load(successResponse.user.urlPhoto)
+                        .centerCrop()
+                        .into(circleImageView)
 
 
-                } catch (e: Exception) {
-                    Log.e("JSON", "Error parsing JSON: ${e.message}")
-
-                } catch (e: SocketTimeoutException) {
-                    Log.e("JSON", "Error No internet: ${e.message}")
-                    showToast("Internet not detected")
-                } catch (e: HttpException) {
-                    val errorBody = e.response()?.errorBody()?.string()
-                    Log.e("JSON", "Error parsing JSON: ${errorBody}")
                 }
+
+
+            } catch (e: Exception) {
+                Log.e("JSON", "Error parsing JSON: ${e.message}")
+
+            } catch (e: SocketTimeoutException) {
+                Log.e("JSON", "Error No internet: ${e.message}")
+                showToast("Internet not detected")
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("JSON", "Error parsing JSON: ${errorBody}")
             }
         }
+        }
 
-        <<<<<<< HEAD
         private fun Newsrv() {
 
             ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
@@ -215,4 +208,3 @@ class HomeFragment : Fragment() {
         }
 
     }
-}
