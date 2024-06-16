@@ -29,7 +29,8 @@
                     android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:src="@drawable/def_profile"
-
+                    tools:alpha="100"
+                    android:alpha="0"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +63,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:text=""
+                tools:alpha="100"
+                android:alpha="0"
                 android:textStyle="bold"
                 tools:text="username" />
 
@@ -72,6 +75,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:text=""
+                tools:alpha="100"
+                android:alpha="0"
                 tools:text="email@email.com" />
 
             <LinearLayout
@@ -89,6 +94,8 @@
                     android:layout_gravity="center"
                     android:text=""
                     android:textSize="10sp"
+                    tools:alpha="100"
+                    android:alpha="0"
                     tools:text="@string/point_asl"
                     android:layout_marginEnd="8dp"/>
 
@@ -98,6 +105,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text=""
+                    tools:alpha="100"
+                    android:alpha="0"
                     android:textSize="10sp"
                     tools:text="@string/point_bisindo" />
 
@@ -258,17 +267,21 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/dark_mode"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:drawableEnd="@drawable/baseline_dark_mode_24"
+                    android:drawablePadding="12dp"/>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_theme"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
 
 
             </LinearLayout>

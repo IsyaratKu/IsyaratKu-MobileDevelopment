@@ -1,5 +1,7 @@
 package com.isyaratku.app.ui.main.profile
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -12,6 +14,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.PopupWindow
@@ -146,6 +150,27 @@ class ProfileFragment : Fragment() {
 
     } */
 
+    private fun playAnimation() {
+
+        val username = ObjectAnimator.ofFloat(binding.tvUsername, View.ALPHA, 1f).setDuration(200)
+        val email = ObjectAnimator.ofFloat(binding.tvEmail, View.ALPHA, 1f).setDuration(300)
+        val pointAsl = ObjectAnimator.ofFloat(binding.tvAslScore, View.ALPHA, 1f).setDuration(300)
+        val pointBisindo = ObjectAnimator.ofFloat(binding.tvBisindoScore, View.ALPHA, 1f).setDuration(300)
+        val profileImage = ObjectAnimator.ofFloat(binding.ivProfile, View.ALPHA, 1f).setDuration(500)
+
+        val together2 = AnimatorSet().apply {
+            playTogether(pointAsl,pointBisindo)
+        }
+        val together1 = AnimatorSet().apply {
+            playTogether(username,email)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(profileImage, together1, together2)
+            startDelay = 300
+        }.start()
+    }
+
     private fun setupAction() {
         binding.apply {
             cardUsername.setOnClickListener {
@@ -160,21 +185,34 @@ class ProfileFragment : Fragment() {
 
                 val popUpWindow = PopupWindow(popUpView, width, height, focusable)
 
+                val fadeOutAnim = AnimationUtils.loadAnimation(context, R.anim.popup_fade_out)
+                fadeOutAnim.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(animation: Animation?) {}
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        popUpWindow.dismiss()
+                    }
+
+                    override fun onAnimationRepeat(animation: Animation?) {}
+                })
+
                 relative.post {
+                    val fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.popup_fade_in)
+                    popUpView.startAnimation(fadeInAnim)
                     popUpWindow.showAtLocation(relative, Gravity.CENTER, 0, 0)
                 }
                 val cancel = popUpView?.findViewById<Button>(R.id.cancelButton)
                 val ok = popUpView?.findViewById<Button>(R.id.okButton)
 
                 cancel?.setOnClickListener {
-                    popUpWindow.dismiss()
+                    popUpView.startAnimation(fadeOutAnim)
                 }
                 ok?.setOnClickListener {
                     val newusername =
                         popUpView.findViewById<TextInputEditText>(R.id.newUsernameEditText)?.text
                     Log.d("newUsername", newusername.toString())
                     changeUsername(token, newusername.toString())
-                    popUpWindow.dismiss()
+                    popUpView.startAnimation(fadeOutAnim)
 
                 }
 
@@ -190,21 +228,35 @@ class ProfileFragment : Fragment() {
 
                 val popUpWindow = PopupWindow(popUpView, width, height, focusable)
 
+                val fadeOutAnim = AnimationUtils.loadAnimation(context, R.anim.popup_fade_out)
+                fadeOutAnim.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(animation: Animation?) {}
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        popUpWindow.dismiss()
+                    }
+
+                    override fun onAnimationRepeat(animation: Animation?) {}
+                })
+
+
                 relative.post {
+                    val fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.popup_fade_in)
+                    popUpView.startAnimation(fadeInAnim)
                     popUpWindow.showAtLocation(relative, Gravity.CENTER, 0, 0)
                 }
                 val cancel = popUpView?.findViewById<Button>(R.id.cancelButton)
                 val ok = popUpView?.findViewById<Button>(R.id.okButton)
 
                 cancel?.setOnClickListener {
-                    popUpWindow.dismiss()
+                    popUpView.startAnimation(fadeOutAnim)
                 }
                 ok?.setOnClickListener {
                     val newEmail =
                         popUpView.findViewById<TextInputEditText>(R.id.newEmailEditText)?.text
                     Log.d("newEmail", newEmail.toString())
                     changeEmail(token, newEmail.toString())
-                    popUpWindow.dismiss()
+                    popUpView.startAnimation(fadeOutAnim)
 
                 }
 
@@ -256,6 +308,7 @@ class ProfileFragment : Fragment() {
                 val apiService = ApiConfig.getApiService()
                 val successResponse = apiService.getProfile(tokenUser)
                 showLoading(false)
+                playAnimation()
 
                 binding.apply {
                     tvUsername.text = successResponse.user!!.username

@@ -1,5 +1,7 @@
 package com.isyaratku.app.ui.main.home
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,15 +13,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.isyaratku.app.api.ApiClient
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.api.ItemNews
 import com.isyaratku.app.api.NewsResponse
-
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.isyaratku.app.data.pref.UserModel
-
 import com.isyaratku.app.databinding.FragmentHomeBinding
 import com.isyaratku.app.ui.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -45,8 +45,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
-
-
 
 
         }
@@ -101,13 +99,16 @@ class HomeFragment : Fragment() {
                 showLoading(false)
 
                 binding.apply {
+
+                    startAnimation()
+
                     tvUsername.text = successResponse.user!!.username
-                    if (successResponse.user.aslScore == null ){
+                    if (successResponse.user.aslScore == null) {
                         tvAslScore.text = "Point ASL : 0"
                     } else {
                         tvAslScore.text = "Point ASL : ${successResponse.user.aslScore}"
                     }
-                    if (successResponse.user.bisindoScore == null ){
+                    if (successResponse.user.bisindoScore == null) {
                         tvBisindoScore.text = "Point Bisindo : 0"
                     } else {
                         tvBisindoScore.text = "Point Bisindo : ${successResponse.user.bisindoScore}"
@@ -131,97 +132,129 @@ class HomeFragment : Fragment() {
                 Log.e("JSON", "Error parsing JSON: $errorBody")
             }
         }
+    }
+
+    private fun startAnimation() {
+
+        val title =
+            ObjectAnimator.ofFloat(binding.tvUsername, View.ALPHA, 1f).setDuration(500)
+        val scoreBisindo =
+            ObjectAnimator.ofFloat(binding.tvBisindoScore, View.ALPHA, 1f)
+                .setDuration(300)
+        val scoreAsl =
+            ObjectAnimator.ofFloat(binding.tvAslScore, View.ALPHA, 1f).setDuration(300)
+        val image = ObjectAnimator.ofFloat(binding.circleImageView, View.ALPHA, 1f)
+            .setDuration(500)
+        val card =
+            ObjectAnimator.ofFloat(binding.cardUser, View.ALPHA, 1f).setDuration(200)
+        val welcome =
+            ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(200)
+        val desc =
+            ObjectAnimator.ofFloat(binding.tvDesc, View.ALPHA, 1f).setDuration(200)
+
+
+        val together1 = AnimatorSet().apply {
+            playTogether(scoreBisindo, scoreAsl)
         }
 
-        private fun Newsrv() {
+        val together2 = AnimatorSet().apply {
+            playTogether(title, image)
+        }
 
-            lifecycleScope.launch {
+        AnimatorSet().apply {
+            playSequentially(welcome,desc,card, together2, together1)
+            startDelay = 300
+        }.start()
+
+    }
+
+    private fun Newsrv() {
+
+        lifecycleScope.launch {
 
 
-
-
-                ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
-                    .enqueue(object : Callback<NewsResponse> {
-                        override fun onResponse(
-                            call: Call<NewsResponse>,
-                            response: Response<NewsResponse>
-                        ) {
-                            if (response.isSuccessful) {
-                                val article = response.body()?.articles ?: emptyList()
-                                val newsList = article.mapNotNull { articles ->
-                                    if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
-                                        ItemNews(articles.title, articles.urlToImage, articles.url)
-                                    } else {
-                                        null
-                                    }
+            ApiClient.apiNewsService.ASLNews("ASL", "en", ApiClient.API_KEY)
+                .enqueue(object : Callback<NewsResponse> {
+                    override fun onResponse(
+                        call: Call<NewsResponse>,
+                        response: Response<NewsResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val article = response.body()?.articles ?: emptyList()
+                            val newsList = article.mapNotNull { articles ->
+                                if (!articles.title.isNullOrEmpty() && !articles.urlToImage.isNullOrEmpty()) {
+                                    ItemNews(articles.title, articles.urlToImage, articles.url)
+                                } else {
+                                    null
                                 }
-                                newsAdapter.submitList(newsList)
-                            } else {
-
-                                showToast("Error Loading News")
                             }
+                            newsAdapter.submitList(newsList)
+                        } else {
+
+                            showToast("Error Loading News")
                         }
+                    }
 
-                        override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
 
-                        }
-                    })
-
-            }
-
+                    }
+                })
 
         }
 
-        private fun getToken() {
+
+    }
+
+    private fun getToken() {
 
 
-            lifecycleScope.launch {
+        lifecycleScope.launch {
 
-                try {
+            try {
 
-                    val jsonString = """
+                val jsonString = """
                         {
                           "email": "$email",
                           "password": "$password"
                         }
                     """
-                    val gson = Gson()
-                    val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-                    val apiService = ApiConfig.getApiService()
-                    val successResponse = apiService.login(jsonObject)
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.login(jsonObject)
 
 
-                    try {
-                        if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
-                            val token = successResponse.token.toString()
-                            Log.d("getToken", token)
-                            homeViewModel.saveSession(UserModel(email, token, password))
+                try {
+                    if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
+                        val token = successResponse.token.toString()
+                        Log.d("getToken", token)
+                        homeViewModel.saveSession(UserModel(email, token, password))
 
-                        } else {
-                            Log.e("Login", "Login failed")
-                        }
-
-
-                    } catch (e: Exception) {
-                        Log.e("JSON", "Error parsing JSON: ${e.message}")
+                    } else {
+                        Log.e("Login", "Login failed")
                     }
 
 
-                } catch (e: HttpException) {
-                    // val errorBody = e.response()?.errorBody()?.string()
-
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
                 }
 
+
+            } catch (e: HttpException) {
+                // val errorBody = e.response()?.errorBody()?.string()
+
             }
+
         }
-
-
-        private fun showLoading(isLoading: Boolean) {
-            binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
-
-        private fun showToast(message: String) {
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        }
-
     }
+
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+}

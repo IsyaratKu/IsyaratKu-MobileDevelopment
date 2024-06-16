@@ -25,7 +25,7 @@ class AslRecyclerView (private val userList: List<UsersItem?>?) : RecyclerView.A
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_in_left)
+        val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_bottom)
         holder.itemView.startAnimation(animation)
         val currentItem = userList!![position]
         holder.binding.apply {

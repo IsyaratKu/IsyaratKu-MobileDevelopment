@@ -54,25 +54,70 @@ class SplashActivity : AppCompatActivity() {
     fun checkSession() {
 
         viewModel.getSession().observe(this) { user ->
-            if (!user.isLogin) {
-                val intent = Intent(this@SplashActivity, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                Handler().postDelayed({
-                    startActivity(intent)
-                },2000)
-            } else {
-
+            if (user.isLogin) {
                 email = user.email
                 password = user.password
-                getToken()
 
+                lifecycleScope.launch {
+
+                    try {
+
+                        val jsonString = """
+                        {
+                          "email": "$email",
+                          "password": "$password"
+                        }
+                    """
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                        val apiService = ApiConfig.getApiService()
+                        val successResponse = apiService.login(jsonObject)
+
+                        try {
+                            if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
+                                val token = successResponse.token.toString()
+                                Log.d("getToken", token)
+                                viewModel.saveSession(UserModel(email, token, password))
+                                launchMainActivity()
+                            } else {
+                                Log.e("Login", "Login failed")
+                            }
+
+
+
+                        } catch (e: Exception) {
+                            Log.e("JSON", "Error parsing JSON: ${e.message}")
+                        }
+
+
+                    } catch (e: HttpException) {
+
+                    }
+
+                }
+
+
+            } else {
                 Handler().postDelayed({
-                    val intent = Intent(this@SplashActivity,MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
+                    launchLoginActivity()
                 },2000)
             }
         }
+    }
+
+
+    private fun launchMainActivity() {
+        val intent = Intent(this@SplashActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun launchLoginActivity() {
+        val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun playAnimation() {
@@ -91,49 +136,6 @@ class SplashActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun getToken() {
-
-
-        lifecycleScope.launch {
-
-            try {
-
-                val jsonString = """
-                        {
-                          "email": "$email",
-                          "password": "$password"
-                        }
-                    """
-                val gson = Gson()
-                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-                val apiService = ApiConfig.getApiService()
-                val successResponse = apiService.login(jsonObject)
-
-
-                try {
-                    if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
-                        val token = successResponse.token.toString()
-                        Log.d("getToken", token)
-                        viewModel.saveSession(UserModel(email, token, password))
-
-                    } else {
-                        Log.e("Login", "Login failed")
-                    }
-
-
-
-                } catch (e: Exception) {
-                    Log.e("JSON", "Error parsing JSON: ${e.message}")
-                }
-
-
-            } catch (e: HttpException) {
-                // val errorBody = e.response()?.errorBody()?.string()
-
-            }
-
-        }
-    }
 
 
 }

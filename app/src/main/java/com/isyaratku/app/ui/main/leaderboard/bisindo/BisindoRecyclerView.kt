@@ -21,7 +21,7 @@ class BisindoRecyclerView (private val userList: List<UsersItemBisindo?>?) : Rec
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_in_left)
+        val animation = AnimationUtils.loadAnimation(holder.itemView.context,R.anim.slide_bottom)
         holder.itemView.startAnimation(animation)
         val currentItem = userList!![position]
         holder.binding.apply {
