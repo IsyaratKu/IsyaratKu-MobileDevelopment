@@ -267,6 +267,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
                 val apiService = ApiConfig.getApiService()
                 val jsonObject = JsonObject().apply {
                     if (modelType == "ASL") {
+
                         addProperty("asl_score", score)
                     } else if (modelType == "Bisindo") {
                         addProperty("bisindo_score", score)
