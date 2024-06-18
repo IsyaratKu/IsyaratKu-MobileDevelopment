@@ -13,13 +13,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.isyaratku.app.api.ApiClient
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.api.ItemNews
 import com.isyaratku.app.api.NewsResponse
-import com.isyaratku.app.data.pref.UserModel
 import com.isyaratku.app.databinding.FragmentHomeBinding
 import com.isyaratku.app.ui.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -38,14 +35,11 @@ class HomeFragment : Fragment() {
     }
     private val binding get() = _binding!!
     private lateinit var token: String
-    private lateinit var email: String
-    private lateinit var password: String
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         homeViewModel.getSession().observe(viewLifecycleOwner) { user ->
-
 
         }
 
@@ -170,6 +164,8 @@ class HomeFragment : Fragment() {
 
     private fun Newsrv() {
 
+        showLoadingLinear(true)
+
         lifecycleScope.launch {
 
 
@@ -189,14 +185,15 @@ class HomeFragment : Fragment() {
                                 }
                             }
                             newsAdapter.submitList(newsList)
+                            showLoadingLinear(false)
                         } else {
-
+                            showLoadingLinear(false)
                             showToast("Error Loading News")
                         }
                     }
 
                     override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-
+                        showLoadingLinear(false)
                     }
                 })
 
@@ -205,52 +202,14 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun getToken() {
-
-
-        lifecycleScope.launch {
-
-            try {
-
-                val jsonString = """
-                        {
-                          "email": "$email",
-                          "password": "$password"
-                        }
-                    """
-                val gson = Gson()
-                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-                val apiService = ApiConfig.getApiService()
-                val successResponse = apiService.login(jsonObject)
-
-
-                try {
-                    if (successResponse.message == "User logged in successfully" && successResponse.user?.emailVerified == true) {
-                        val token = successResponse.token.toString()
-                        Log.d("getToken", token)
-                        homeViewModel.saveSession(UserModel(email, token, password))
-
-                    } else {
-                        Log.e("Login", "Login failed")
-                    }
-
-
-                } catch (e: Exception) {
-                    Log.e("JSON", "Error parsing JSON: ${e.message}")
-                }
-
-
-            } catch (e: HttpException) {
-                // val errorBody = e.response()?.errorBody()?.string()
-
-            }
-
-        }
-    }
 
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showLoadingLinear(isLoading: Boolean) {
+        binding.linearProgressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showToast(message: String) {

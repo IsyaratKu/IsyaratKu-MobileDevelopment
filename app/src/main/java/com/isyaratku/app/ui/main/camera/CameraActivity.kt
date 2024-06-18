@@ -54,6 +54,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     private var modelType: String? = null
     private var aslScore: String = ""
     private var bisindoScore: String = " "
+    private var timeLeftInMillis: Long = 10000
+    private val defaultTimeToAdd = 1000L
     private val viewModel by viewModels<CameraViewModel> {
         ViewModelFactory.getInstance(this)
     }
@@ -155,6 +157,11 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     @SuppressLint("SetTextI18n")
     private fun startGame() {
+        binding.apply {
+            detectionResultTextView.visibility = View.VISIBLE
+            Timer.visibility = View.VISIBLE
+            pointv.visibility = View.VISIBLE
+        }
         startButton.visibility = View.GONE
         score = 0
         pointv.text = "Score : $score"
@@ -164,9 +171,10 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     }
 
     private fun startTimer() {
-        gameTimer = object : CountDownTimer(10000, 1000) {
+        gameTimer = object : CountDownTimer(timeLeftInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                binding.Timer.text = " ${millisUntilFinished / 1000}s"
+                val remainingSeconds = millisUntilFinished / 1000
+                binding.Timer.text = "$remainingSeconds s"
             }
 
             override fun onFinish() {
@@ -175,6 +183,17 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
         }.start()
     }
+
+    private fun addTime(additionalTime: Long) {
+
+            gameTimer?.cancel()
+            timeLeftInMillis += additionalTime
+            startTimer()
+
+
+
+    }
+
 
     private fun endGame() {
         isGameRunning = false
@@ -196,6 +215,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
             startButton.visibility = View.VISIBLE
+            finish()
         }
         builder.show()
     }
@@ -236,7 +256,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     private fun handleResults(results: FloatArray, modelType: String) {
         val maxProbability = results.maxOrNull() ?: 0.00f
-        val trimValue = String.format("%.3f", maxProbability)
+        val trimValue = String.format("%.2f", maxProbability)
         val maxIndex = results.indexOfFirst { it == maxProbability } // Find index of max value
         val detectedSign =
             (maxIndex + 'A'.code).toChar() // Convert index to corresponding letter
@@ -244,10 +264,13 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         if (maxProbability > 0.95) {
             if (modelType == "ASL") {
                 aslScore += 10
+
+
             } else if (modelType == "Bisindo") {
                 bisindoScore += 10
             }
 
+            runOnUiThread { addTime(defaultTimeToAdd) }
             score += 10
             playPointSound()
         }
