@@ -47,17 +47,16 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     private lateinit var aslInterpreter: Interpreter
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraSetupManager: CameraSetupManager
-    private var token:String = ""
+    private var token: String = ""
     private var score: Int = 0
-    private var gameTimer : CountDownTimer? = null
-    private var isGameRunning : Boolean = false
-    private var modelType : String? = null
+    private var gameTimer: CountDownTimer? = null
+    private var isGameRunning: Boolean = false
+    private var modelType: String? = null
     private var aslScore: String = ""
     private var bisindoScore: String = " "
     private val viewModel by viewModels<CameraViewModel> {
         ViewModelFactory.getInstance(this)
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,17 +69,17 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         previewView = binding.viewFinder
         startButton = binding.startButton
         overlayView = findViewById(R.id.overlay)
-        cameraSetupManager = CameraSetupManager(this, previewView, ImageAnalyzer())
 
+
+        cameraSetupManager = CameraSetupManager(this, previewView, ImageAnalyzer())
         cameraExecutor = Executors.newSingleThreadExecutor()
 
 
-        viewModel.getSession().observe(this@CameraActivity){ user ->
-            token =user.token
+        viewModel.getSession().observe(this@CameraActivity) { user ->
+            token = user.token
             Log.d("token", token)
 
         }
-
 
 
         // Tambahkan listener untuk switch camera button
@@ -88,7 +87,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         switchCameraButton.setOnClickListener {
             cameraSetupManager.switchCamera()
         }
-        startButton.setOnClickListener{
+        startButton.setOnClickListener {
             showModelSelectionDialog()
         }
     }
@@ -110,7 +109,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     private fun initializeASLModel() {
         try {
-            val aslModel = FileUtil.loadMappedFile(this, "asl_model.tflite")
+            val aslModel = FileUtil.loadMappedFile(this, "model.tflite")
             aslInterpreter = Interpreter(aslModel)
             aslDetectorHelper = ASLSignLanguageDetectorHelper(
                 this,
@@ -155,16 +154,17 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     }
 
     @SuppressLint("SetTextI18n")
-    private fun startGame(){
+    private fun startGame() {
         startButton.visibility = View.GONE
         score = 0
-        pointv.text  ="Score : $score"
+        pointv.text = "Score : $score"
         isGameRunning = true
         startTimer()
         cameraSetupManager.startCamera()
     }
-    private fun startTimer(){
-        gameTimer = object : CountDownTimer (10000,1000){
+
+    private fun startTimer() {
+        gameTimer = object : CountDownTimer(10000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 binding.Timer.text = " ${millisUntilFinished / 1000}s"
             }
@@ -175,7 +175,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
         }.start()
     }
-    private fun endGame(){
+
+    private fun endGame() {
         isGameRunning = false
         gameTimer?.cancel()
         cameraSetupManager.stopCamera()
@@ -188,13 +189,13 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         }
     }
 
-    private fun showScorePopUp(){
+    private fun showScorePopUp() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
         builder.setMessage("Your Score : $score")
-        builder.setPositiveButton("OK"){ dialog,_ ->
+        builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
-            startButton.visibility =  View.VISIBLE
+            startButton.visibility = View.VISIBLE
         }
         builder.show()
     }
@@ -235,30 +236,29 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     private fun handleResults(results: FloatArray, modelType: String) {
         val maxProbability = results.maxOrNull() ?: 0.00f
-        val trimValue = String.format("%.3f",maxProbability)
+        val trimValue = String.format("%.3f", maxProbability)
         val maxIndex = results.indexOfFirst { it == maxProbability } // Find index of max value
+        val detectedSign =
+            (maxIndex + 'A'.code).toChar() // Convert index to corresponding letter
+
         if (maxProbability > 0.95) {
-            if (modelType == "ASL"){
+            if (modelType == "ASL") {
                 aslScore += 10
-            }else if (modelType == "Bisindo"){
+            } else if (modelType == "Bisindo") {
                 bisindoScore += 10
             }
 
-
             score += 10
             playPointSound()
-
         }
-
-
-
 
         runOnUiThread {
             pointv.text = "Score: $score"
             detectionResultTextView.text =
-                "Detected sign at index: $maxIndex with probability: $trimValue using model: $modelType"
+                "Detected sign: $detectedSign with probability: $trimValue using model: $modelType"
         }
     }
+
 
     private fun SendScore(modelType: String, score: Int) {
         lifecycleScope.launch {
