@@ -86,4 +86,11 @@ interface ApiService {
         @Query("apikey") apiKey:String
     ): Call<NewsResponse>
 
+    @GET("challenge/random-bisindo-sentence")
+    suspend fun getBisindoSentences(
+    ):SentenceResponse
+
+    @GET("challenge/random-asl-sentence")
+    suspend fun getASLSentences(
+    ):SentenceResponse
 }

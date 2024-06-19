@@ -11,22 +11,11 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
-    <!--
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.isyaratku.app.ui.main.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
-
-
-
-    <fragment
-        android:id="@+id/navigation_camera"
-        android:name="com.isyaratku.app.ui.main.camera.CameraFragment"
-        android:label="@string/title_camera"
-        tools:layout="@layout/fragment_camera" />
-    !-->
-
 
     <fragment
         android:id="@+id/navigation_profile"

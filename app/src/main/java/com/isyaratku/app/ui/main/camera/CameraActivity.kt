@@ -21,15 +21,21 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.isyaratku.app.R
 import com.isyaratku.app.api.ApiConfig
+import com.isyaratku.app.api.ErrorResponse
+import com.isyaratku.app.api.SentenceResponse
 import com.isyaratku.app.databinding.ActivityCameraBinding
 import com.isyaratku.app.ui.ViewModelFactory
 import kotlinx.coroutines.launch
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
+import retrofit2.HttpException
 import java.io.FileNotFoundException
+import java.net.SocketTimeoutException
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -47,6 +53,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     private lateinit var aslInterpreter: Interpreter
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraSetupManager: CameraSetupManager
+    private lateinit var sentences: SentenceResponse
+    private lateinit var sentenceText: String
     private var token: String = ""
     private var score: Int = 0
     private var gameTimer: CountDownTimer? = null
@@ -54,8 +62,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     private var modelType: String? = null
     private var aslScore: String = ""
     private var bisindoScore: String = " "
-    private var timeLeftInMillis: Long = 10000
-    private val defaultTimeToAdd = 1000L
+    private var timeLeftInMillis: Long = 20000
+    private val defaultTimeToAdd = 8000L
     private val viewModel by viewModels<CameraViewModel> {
         ViewModelFactory.getInstance(this)
     }
@@ -76,23 +84,21 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         cameraSetupManager = CameraSetupManager(this, previewView, ImageAnalyzer())
         cameraExecutor = Executors.newSingleThreadExecutor()
 
+
         viewModel.getSession().observe(this@CameraActivity) { user ->
             token = user.token
             Log.d("token", token)
 
         }
 
-
-        // Tambahkan listener untuk switch camera button
         val switchCameraButton = findViewById<ImageView>(R.id.switchCamera)
         switchCameraButton.setOnClickListener {
             cameraSetupManager.switchCamera()
         }
+
         startButton.setOnClickListener {
             showModelSelectionDialog()
         }
-
-
     }
 
     private fun showModelSelectionDialog() {
@@ -101,11 +107,18 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         val models = arrayOf("ASL", "Bisindo")
         builder.setItems(models) { dialog, which ->
             when (which) {
-                0 -> initializeASLModel()
-                1 -> initializeBisindoModel()
+                0 -> {
+                    initializeASLModel()
+                    requestSentencesASL()
+                }
+
+                1 -> {
+                    initializeBisindoModel()
+                    requestSentencesBisindo()
+                }
             }
             dialog.dismiss()
-            startGame()
+            countDownToStart()
         }
         builder.show()
     }
@@ -158,10 +171,12 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     @SuppressLint("SetTextI18n")
     private fun startGame() {
+
         binding.apply {
             detectionResultTextView.visibility = View.VISIBLE
             Timer.visibility = View.VISIBLE
             pointv.visibility = View.VISIBLE
+            tvChar.visibility = View.VISIBLE
         }
         startButton.visibility = View.GONE
         score = 0
@@ -169,6 +184,23 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         isGameRunning = true
         startTimer()
         cameraSetupManager.startCamera()
+    }
+
+    private fun countDownToStart() {
+        binding.tvCountDown.visibility = View.VISIBLE
+        object : CountDownTimer(5000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val remainingSeconds = millisUntilFinished / 1000
+                binding.tvCountDown.text = "$remainingSeconds s"
+            }
+
+            override fun onFinish() {
+                binding.tvCountDown.visibility = View.GONE
+                startGame()
+            }
+
+        }.start()
+
     }
 
     private fun startTimer() {
@@ -191,7 +223,6 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         timeLeftInMillis += additionalTime
         startTimer()
 
-
     }
 
 
@@ -202,16 +233,16 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         showScorePopUp()
 
         if (modelType == "ASL") {
-            SendScore("ASL", score)
+            sendScore("ASL", score)
         } else if (modelType == "Bisindo") {
-            SendScore("Bisindo", score)
+            sendScore("Bisindo", score)
         }
     }
 
     private fun showScorePopUp() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
-        builder.setMessage("Your Score : $score")
+        builder.setMessage("Your Score : $score \n Full Text : $sentenceText")
         builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
             startButton.visibility = View.VISIBLE
@@ -261,29 +292,48 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         val detectedSign =
             (maxIndex + 'A'.code).toChar() // Convert index to corresponding letter
 
-        if (maxProbability > 0.95) {
-            if (modelType == "ASL") {
-                aslScore += 10
-
-
-            } else if (modelType == "Bisindo") {
-                bisindoScore += 10
-            }
-
-            runOnUiThread { addTime(defaultTimeToAdd) }
-            score += 10
-            playPointSound()
-        }
+        val sentence = sentenceText.replace("\\s".toRegex(), "").uppercase(Locale.getDefault()).toCharArray()
+        Log.d("char",String(sentence))
+        var position = 0
 
         runOnUiThread {
             pointv.text = "Score: $score"
             detectionResultTextView.text =
                 "Detected sign: $detectedSign with probability: $trimValue using model: $modelType"
+            binding.tvChar.text = sentence[position].toString()
         }
+
+
+        if (maxProbability > 0.55) {
+            while (position < sentence.size && sentence[position] == detectedSign) {
+                score += 10
+                playPointSound()
+                runOnUiThread { addTime(defaultTimeToAdd) }
+                position++
+            }
+
+            if (modelType == "ASL") {
+                aslScore += 10
+            } else if (modelType == "Bisindo") {
+                bisindoScore += 10
+            }
+
+            runOnUiThread {
+                pointv.text = "Score: $score"
+                detectionResultTextView.text =
+                    "Detected sign: $detectedSign with probability: $trimValue using model: $modelType"
+                binding.tvChar.text = sentence[position].toString()
+            }
+
+            if (position == sentence.size) {
+                endGame()
+            }
+        }
+
     }
 
 
-    private fun SendScore(modelType: String, score: Int) {
+    private fun sendScore(modelType: String, score: Int) {
         lifecycleScope.launch {
             try {
                 val tokenUser = "Bearer $token"
@@ -326,4 +376,59 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
     companion object {
         const val EXTRA_CAMERAX_IMAGE = "CameraX Image"
     }
+
+    private fun requestSentencesBisindo() {
+
+
+        lifecycleScope.launch {
+
+            try {
+
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.getBisindoSentences()
+                try {
+                    sentences = successResponse
+                    sentenceText = sentences.sentence.toString()
+
+
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+                }
+
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Gson().fromJson(errorBody, ErrorResponse::class.java)
+            } catch (e: SocketTimeoutException) {
+                Log.e("JSON", "Error No internet: ${e.message}")
+            }
+        }
+    }
+
+    private fun requestSentencesASL() {
+
+
+        lifecycleScope.launch {
+
+            try {
+
+                val apiService = ApiConfig.getApiService()
+                val successResponse = apiService.getASLSentences()
+                try {
+                    sentences = successResponse
+                    sentenceText = sentences.sentence.toString()
+
+
+                } catch (e: Exception) {
+                    Log.e("JSON", "Error parsing JSON: ${e.message}")
+                }
+
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Gson().fromJson(errorBody, ErrorResponse::class.java)
+            } catch (e: SocketTimeoutException) {
+                Log.e("JSON", "Error No internet: ${e.message}")
+            }
+        }
+    }
+
 }
