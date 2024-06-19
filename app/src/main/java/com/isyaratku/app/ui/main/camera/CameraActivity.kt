@@ -76,7 +76,6 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         cameraSetupManager = CameraSetupManager(this, previewView, ImageAnalyzer())
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-
         viewModel.getSession().observe(this@CameraActivity) { user ->
             token = user.token
             Log.d("token", token)
@@ -92,6 +91,8 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
         startButton.setOnClickListener {
             showModelSelectionDialog()
         }
+
+
     }
 
     private fun showModelSelectionDialog() {
@@ -111,7 +112,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     private fun initializeASLModel() {
         try {
-            val aslModel = FileUtil.loadMappedFile(this, "model.tflite")
+            val aslModel = FileUtil.loadMappedFile(this, "model_asl.tflite")
             aslInterpreter = Interpreter(aslModel)
             aslDetectorHelper = ASLSignLanguageDetectorHelper(
                 this,
@@ -186,10 +187,9 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
     private fun addTime(additionalTime: Long) {
 
-            gameTimer?.cancel()
-            timeLeftInMillis += additionalTime
-            startTimer()
-
+        gameTimer?.cancel()
+        timeLeftInMillis += additionalTime
+        startTimer()
 
 
     }

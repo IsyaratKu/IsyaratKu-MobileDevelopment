@@ -9,7 +9,7 @@
     <color name="bounding_box_color">#FF0000</color>
 
 
-
+    <color name="mp_color_primary">#007F8B</color>
     <color name="md_theme_primary">#33618D</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#D0E4FF</color>

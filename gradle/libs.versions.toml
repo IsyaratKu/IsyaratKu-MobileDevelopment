@@ -24,6 +24,7 @@ activity = "1.8.0"
 recyclerview = "1.2.1"
 retrofit = "2.9.0"
 cameraxVersion = "1.2.3"
+tasksVision = "0.10.14"
 tensorflow-lite-support = "0.1.0"
 tensorflow-lite-metadata = "0.1.0"
 tensorflowLiteGpu = "2.9.0"
@@ -55,6 +56,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasksVision" }
 tensorflow-lite-gpu = { module = "org.tensorflow:tensorflow-lite-gpu", version.ref = "tensorflowLiteGpu" }
 tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
 tensorflow-lite-support = { group = "org.tensorflow", name = "tensorflow-lite-support", version.ref = "tensorflow-lite-support" }

@@ -21,7 +21,7 @@ class ASLSignLanguageDetectorHelper(
     fun detectSign(image: ImageProxy) {
         val bitmap = imageProxyToBitmap(image)
         val inputBuffer = convertBitmapToByteBuffer(bitmap)
-        val outputBuffer = Array(1) { FloatArray(26) }  // Sesuaikan output shape jika diperlukan
+        val outputBuffer = Array(1) { FloatArray(27) }  // Sesuaikan output shape jika diperlukan
 
         // Run inference
         interpreter.run(inputBuffer, outputBuffer)
@@ -78,6 +78,7 @@ class ASLSignLanguageDetectorHelper(
         }
         return byteBuffer
     }
+
 
     interface DetectorListener {
         fun onResults(results: FloatArray)

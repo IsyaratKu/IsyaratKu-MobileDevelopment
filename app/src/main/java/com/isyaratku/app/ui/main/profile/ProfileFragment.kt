@@ -321,7 +321,7 @@ class ProfileFragment : Fragment() {
                     if (successResponse.user.aslScore == null){
                         tvAslScore.text = getString(R.string.point_asl,"0")
                     } else {
-                        tvAslScore.text = getString(R.string.point_bisindo,successResponse.user.aslScore)
+                        tvAslScore.text = getString(R.string.point_asl,successResponse.user.aslScore)
                     }
                     Glide.with(requireContext())
                         .load(successResponse.user.urlPhoto)
