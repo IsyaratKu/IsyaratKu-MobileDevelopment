@@ -327,6 +327,7 @@ class CameraActivity : AppCompatActivity(), SignLanguageDetector.DetectorListene
 
             if (position == sentence.size) {
                 endGame()
+                position = 0
             }
         }
 

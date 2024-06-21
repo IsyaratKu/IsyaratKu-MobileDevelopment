@@ -89,22 +89,6 @@ class ProfileFragment : Fragment() {
             requestUser(token)
             changePhoto()
 
-            /*val profileItem = listOf(
-                profile_Item(profile_Item.TYPER_HEADER, title = "Account Setting"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_person_24, "Change Username"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_lock_24, "Change Password"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_alternate_email_24, "Change Email"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_exit_to_app_24, "Logout"),
-                profile_Item(profile_Item.TYPER_HEADER, title = "Application Setting"),
-                profile_Item(profile_Item.TYPER_DARK_MODE, R.drawable.baseline_dark_mode_24, "Dark Mode"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_language_24, "Language"),
-                profile_Item(profile_Item.TYPER_ITEM, R.drawable.baseline_accessibility_new_24, "Accessibility"),
-            )
-
-            val adapter = ProfileAdapter(requireContext(), profileItem, this, darkModeSwitchListener, token)
-            binding.recyclerViewProfile.layoutManager = LinearLayoutManager(context)
-            binding.recyclerViewProfile.adapter = adapter */
-
         }
 
         sharedPreferences =
@@ -136,19 +120,6 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    /*
-
-    private val logout = binding1.card.setOnClickListener {
-        profileViewModel.logout()
-    } */
-
-    /*
-    private val darkModeSwitchListener = CompoundButton.OnCheckedChangeListener { buttonView, isChecked : Boolean ->
-        settingViewModel.saveThmSetting(isChecked)
-        Log.d("iscek",isChecked.toString())
-        buttonView.isChecked = isChecked
-
-    } */
 
     private fun playAnimation() {
 
@@ -285,16 +256,6 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 
-    /* override fun onItemClick(position: Int) {
-        Toast.makeText(context, "Clicked: $position", Toast.LENGTH_SHORT).show()
-        val item = (binding.recyclerViewProfile.adapter as ProfileAdapter).items[position]
-        when(item.title){
-            "Language"->{
-                val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
-                startActivity(intent)
-            }
-        }
-    }*/
 
     @SuppressLint("SuspiciousIndentation")
     private fun requestUser(token: String) {
@@ -326,6 +287,7 @@ class ProfileFragment : Fragment() {
                     Glide.with(requireContext())
                         .load(successResponse.user.urlPhoto)
                         .centerCrop()
+                        .error(R.drawable.def_profile)
                         .into(ivProfile)
 
                     username = successResponse.user.username.toString()

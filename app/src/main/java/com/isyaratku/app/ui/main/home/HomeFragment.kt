@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.isyaratku.app.R
 import com.isyaratku.app.api.ApiClient
 import com.isyaratku.app.api.ApiConfig
 import com.isyaratku.app.api.ItemNews
@@ -85,6 +86,7 @@ class HomeFragment : Fragment() {
                         Glide.with(requireContext())
                             .load(successResponse.user.urlPhoto)
                             .centerCrop()
+                            .error(R.drawable.baseline_person_24)
                             .into(circleImageView)
                     }
                 }
